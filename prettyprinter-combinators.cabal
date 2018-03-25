@@ -1,0 +1,70 @@
+-- Created     :  21 March 2018
+
+name:
+  prettyprinter-combinators
+version:
+  0.1.0.0
+synopsis:
+  Some useful combinators for the prettyprinter package
+description:
+  TODO
+license:
+  BSD3
+-- license-file:
+--   LICENSE
+author:
+  Sergey Vinokurov
+maintainer:
+  Sergey Vinokurov <serg.foo@gmail.com>
+
+cabal-version:
+  >= 1.16
+build-type:
+  Simple
+
+library
+  exposed-modules:
+    Data.Text.Prettyprint.Doc.Combinators
+    Data.Text.Prettyprint.Doc.Data
+    Data.Text.Prettyprint.Doc.Generics
+    Data.Text.Prettyprint.Doc.Show
+  other-modules:
+    Data.Text.Prettyprint.Doc.Combinators.Basic
+    Data.Text.Prettyprint.Doc.MetaDoc
+  hs-source-dirs:
+    src
+  build-depends:
+    base >= 4.7,
+    bimap,
+    bytestring,
+    containers,
+    dlist,
+    prettyprinter,
+    pretty-show,
+    syb,
+    text,
+    vector,
+    void,
+    unordered-containers
+  default-language:
+    Haskell2010
+  ghc-options:
+    -Wall
+    -fwarn-name-shadowing
+    -fno-warn-type-defaults
+  if impl(ghc >= 8.0)
+    ghc-options:
+      -Wall-missed-specialisations
+      -Wcompat
+      -Whi-shadowing
+      -Widentities
+      -Wincomplete-record-updates
+      -Wincomplete-uni-patterns
+      -Wmissing-exported-signatures
+  if impl(ghc >= 8.2)
+    ghc-options:
+      -Wcpp-undef
+      -Wmissing-home-modules
+      -Wunbanged-strict-patterns
+  ghc-prof-options:
+    -fprof-auto
