@@ -20,12 +20,13 @@
 
 module Data.Text.Prettyprint.Doc.Combinators
   ( Pretty(..)
+  , PP.Doc
   , putDocLn
   , displayDoc
   , displayDocString
-  , showDoc
   , docFromString
   , docFromText
+  , PP.viaShow
 
   , MapEntry(..)
   , (-->)
@@ -36,6 +37,8 @@ module Data.Text.Prettyprint.Doc.Combinators
   , ppDictHeader
   , ppDictAssocList
 
+  , ppTuple
+  , ppTupleWith
   , ppListWith
   , ppFoldableHeader
   , ppFoldableHeaderWith
@@ -115,9 +118,6 @@ displayDoc = PP.Render.renderLazy . PP.layoutPretty PP.defaultLayoutOptions
 displayDocString :: Doc ann -> String
 displayDocString = TL.unpack . displayDoc
 
-showDoc :: Show a => a -> Doc ann
-showDoc = docFromString . show
-
 docFromString :: String -> Doc ann
 docFromString = pretty . TL.pack
 
@@ -166,6 +166,12 @@ ppList = ppListWith pretty
 
 ppListWith :: (a -> Doc ann) -> [a] -> Doc ann
 ppListWith f = ppListWithDelim PP.lbracket PP.rbracket . map f
+
+ppTuple :: Pretty a => [a] -> Doc ann
+ppTuple = ppTupleWith pretty
+
+ppTupleWith :: (a -> Doc ann) -> [a] -> Doc ann
+ppTupleWith f = ppListWithDelim PP.lparen PP.rparen . map f
 
 ppFoldableHeader :: (Pretty a, Foldable f) => Doc ann -> f a -> Doc ann
 ppFoldableHeader = ppFoldableHeaderWith pretty
@@ -269,9 +275,8 @@ ppByteStringLazy = mdPayload . lazyByteStringMetaDoc
 ppShortByteString :: ShortBS.ShortByteString -> Doc ann
 ppShortByteString = mdPayload . shortByteStringMetaDoc
 
-ppTrace :: Bool -> Doc ann -> a -> a
-ppTrace False _   = id
-ppTrace True  msg = trace (displayDocString msg)
+ppTrace :: Doc ann -> a -> a
+ppTrace msg = trace (displayDocString msg)
 
 ppCallStack :: CallStack -> Doc ann
 ppCallStack =

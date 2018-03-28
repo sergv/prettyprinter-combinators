@@ -26,6 +26,7 @@ module Data.Text.Prettyprint.Doc.MetaDoc
   , metaDocFloat
   , metaDocDouble
   , metaDocInteger
+  , metaDocNatural
   , metaDocWord
   , metaDocWord8
   , metaDocWord16
@@ -49,9 +50,9 @@ module Data.Text.Prettyprint.Doc.MetaDoc
   , constructorAppMetaDoc
   ) where
 
-import qualified Data.ByteString.Short as ShortBS
 import qualified Data.ByteString.Char8 as C8
 import qualified Data.ByteString.Lazy.Char8 as CL8
+import qualified Data.ByteString.Short as ShortBS
 import Data.Int
 import Data.Semigroup
 import qualified Data.Text as T
@@ -60,6 +61,7 @@ import Data.Text.Prettyprint.Doc
 import qualified Data.Text.Prettyprint.Doc as PP
 import Data.Text.Prettyprint.Doc.Combinators.Basic
 import Data.Word
+import Numeric.Natural
 
 data DocKind = Atomic | Composite
   deriving (Eq, Ord, Enum, Bounded)
@@ -112,6 +114,9 @@ metaDocDouble = atomicMetaDoc . pretty
 
 metaDocInteger :: Integer -> MetaDoc ann
 metaDocInteger = atomicMetaDoc . pretty
+
+metaDocNatural :: Natural -> MetaDoc ann
+metaDocNatural = atomicMetaDoc . pretty
 
 metaDocWord :: Word -> MetaDoc ann
 metaDocWord = atomicMetaDoc . pretty
@@ -201,5 +206,3 @@ constructorAppMetaDoc constructor args =
         Composite -> compositeMetaDoc $ PP.flatAlt payload (PP.parens payload)
       where
         payload = mdPayload md
-
-

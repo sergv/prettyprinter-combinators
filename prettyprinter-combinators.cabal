@@ -28,6 +28,7 @@ library
     Data.Text.Prettyprint.Doc.Data
     Data.Text.Prettyprint.Doc.Generics
     Data.Text.Prettyprint.Doc.Show
+    Data.Text.Prettyprint.Doc.TH
   other-modules:
     Data.Text.Prettyprint.Doc.Combinators.Basic
     Data.Text.Prettyprint.Doc.MetaDoc
@@ -39,9 +40,12 @@ library
     bytestring,
     containers,
     dlist,
+    hashable,
+    mtl,
     prettyprinter,
     pretty-show,
     syb,
+    template-haskell,
     text,
     vector,
     void,
@@ -49,6 +53,45 @@ library
   default-language:
     Haskell2010
   ghc-options:
+    -Wall
+    -fwarn-name-shadowing
+    -fno-warn-type-defaults
+  if impl(ghc >= 8.0)
+    ghc-options:
+      -Wall-missed-specialisations
+      -Wcompat
+      -Whi-shadowing
+      -Widentities
+      -Wincomplete-record-updates
+      -Wincomplete-uni-patterns
+      -Wmissing-exported-signatures
+  if impl(ghc >= 8.2)
+    ghc-options:
+      -Wcpp-undef
+      -Wmissing-home-modules
+      -Wunbanged-strict-patterns
+  ghc-prof-options:
+    -fprof-auto
+
+test-suite prettyprinter-combinator-tests
+  type:
+    exitcode-stdio-1.0
+  main-is:
+    test/PrettyprinterCombinatorTests.hs
+  hs-source-dirs:
+    . test
+  build-depends:
+    base,
+    containers,
+    prettyprinter,
+    prettyprinter-combinators,
+    unordered-containers,
+    vector
+  default-language:
+    Haskell2010
+  ghc-options:
+    -rtsopts
+    -main-is PrettyprinterCombinatorTests
     -Wall
     -fwarn-name-shadowing
     -fno-warn-type-defaults

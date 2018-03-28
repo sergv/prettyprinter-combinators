@@ -18,6 +18,7 @@
 {-# LANGUAGE KindSignatures       #-}
 {-# LANGUAGE LambdaCase           #-}
 {-# LANGUAGE NamedFieldPuns       #-}
+{-# LANGUAGE OverloadedStrings    #-}
 {-# LANGUAGE ScopedTypeVariables  #-}
 {-# LANGUAGE TypeApplications     #-}
 {-# LANGUAGE TypeFamilies         #-}
@@ -50,12 +51,17 @@ import Data.Vector (Vector)
 import Data.Void
 import Data.Word
 import GHC.Generics
+import GHC.Real (Ratio(..))
 import GHC.Stack (CallStack)
 import GHC.TypeLits
+import Numeric.Natural
 
 import Data.Text.Prettyprint.Doc
 import Data.Text.Prettyprint.Doc.Combinators
 import Data.Text.Prettyprint.Doc.MetaDoc
+
+import qualified Language.Haskell.TH as TH
+import qualified Language.Haskell.TH.Syntax as TH
 
 -- $setup
 -- >>> :set -XDeriveGeneric
@@ -169,7 +175,7 @@ instance (GPretty f, GPretty g) => GPretty (f :+: g) where
     R1 y -> gpretty y
 
 -- Use 'PPGenericDeriving' to give it a chance to fire before standard 'Pretty'.
-instance PPGenericOverride c => GPretty (K1 i c) where
+instance PPGenericOverride a => GPretty (K1 i a) where
   gpretty = ppGenericOverride . unK1
 
 
@@ -192,81 +198,208 @@ instance Pretty a => PPGenericOverride a where
   ppGenericOverride = compositeMetaDoc . pretty
 
 
-
 instance {-# OVERLAPS #-} PPGenericOverride Int where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocInt
 
 instance {-# OVERLAPS #-} PPGenericOverride Float where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocFloat
 
 instance {-# OVERLAPS #-} PPGenericOverride Double where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocDouble
 
 instance {-# OVERLAPS #-} PPGenericOverride Integer where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocInteger
 
+instance {-# OVERLAPS #-} PPGenericOverride Natural where
+  {-# INLINE ppGenericOverride #-}
+  ppGenericOverride = metaDocNatural
+
 instance {-# OVERLAPS #-} PPGenericOverride Word where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocWord
 
 instance {-# OVERLAPS #-} PPGenericOverride Word8 where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocWord8
 
 instance {-# OVERLAPS #-} PPGenericOverride Word16 where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocWord16
 
 instance {-# OVERLAPS #-} PPGenericOverride Word32 where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocWord32
 
 instance {-# OVERLAPS #-} PPGenericOverride Word64 where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocWord64
 
 instance {-# OVERLAPS #-} PPGenericOverride Int8 where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocInt8
 
 instance {-# OVERLAPS #-} PPGenericOverride Int16 where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocInt16
 
 instance {-# OVERLAPS #-} PPGenericOverride Int32 where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocInt32
 
 instance {-# OVERLAPS #-} PPGenericOverride Int64 where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocInt64
 
 instance {-# OVERLAPS #-} PPGenericOverride () where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocUnit
 
 instance {-# OVERLAPS #-} PPGenericOverride Bool where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocBool
 
 instance {-# OVERLAPS #-} PPGenericOverride Char where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = metaDocChar
 
+instance {-# OVERLAPS #-} PPGenericOverride a => PPGenericOverride (Ratio a) where
+  {-# INLINABLE ppGenericOverride #-}
+  ppGenericOverride (x :% y) =
+    ppGenericOverride x <> atomicMetaDoc "/" <> ppGenericOverride y
+
 instance {-# OVERLAPS #-} PPGenericOverride CallStack where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride =
     compositeMetaDoc . ppCallStack
 
 
 instance {-# OVERLAPS #-} PPGenericOverride (Doc Void) where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride =
     compositeMetaDoc . fmap absurd
 
 instance {-# OVERLAPS #-} PPGenericOverride String where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = stringMetaDoc
 
 instance {-# OVERLAPS #-} PPGenericOverride T.Text where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = strictTextMetaDoc
 
 instance {-# OVERLAPS #-} PPGenericOverride TL.Text where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = lazyTextMetaDoc
 
 instance {-# OVERLAPS #-} PPGenericOverride C8.ByteString where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = strictByteStringMetaDoc
 
 instance {-# OVERLAPS #-} PPGenericOverride CL8.ByteString where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = lazyByteStringMetaDoc
 
 instance {-# OVERLAPS #-} PPGenericOverride ShortBS.ShortByteString where
+  {-# INLINE ppGenericOverride #-}
   ppGenericOverride = shortByteStringMetaDoc
+
+instance {-# OVERLAPS #-} PPGenericOverride TH.OccName            where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.NameFlavour        where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.PkgName            where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.NameSpace          where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.ModName            where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Name               where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.TyVarBndr          where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.TyLit              where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Type               where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.SourceUnpackedness where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.SourceStrictness   where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Bang               where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Con                where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Lit                where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Stmt               where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Guard              where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Body               where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Match              where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Range              where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Exp                where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Pat                where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Clause             where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.DerivStrategy      where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.DerivClause        where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.FunDep             where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Overlap            where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Callconv           where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Safety             where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Foreign            where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.FixityDirection    where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Fixity             where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Inline             where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.RuleMatch          where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Phases             where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.RuleBndr           where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.AnnTarget          where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Pragma             where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.TySynEqn           where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.FamilyResultSig    where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.InjectivityAnn     where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.TypeFamilyHead     where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Role               where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.PatSynArgs         where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.PatSynDir          where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Dec                where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Info               where ppGenericOverride = gpretty . from
+
+instance {-# OVERLAPS #-}
+  ( PPGenericOverride a
+  , PPGenericOverride b
+  ) => PPGenericOverride (a, b) where
+  ppGenericOverride (a, b) = atomicMetaDoc $ pretty
+    ( PPGenericOverrideToPretty a
+    , PPGenericOverrideToPretty b
+    )
+
+instance {-# OVERLAPS #-}
+  ( PPGenericOverride a
+  , PPGenericOverride b
+  , PPGenericOverride c
+  ) => PPGenericOverride (a, b, c) where
+  ppGenericOverride (a, b, c) = atomicMetaDoc $ pretty
+    ( PPGenericOverrideToPretty a
+    , PPGenericOverrideToPretty b
+    , PPGenericOverrideToPretty c
+    )
+
+-- instance {-# OVERLAPS #-}
+--   ( PPGenericOverride a
+--   , PPGenericOverride b
+--   , PPGenericOverride c
+--   , PPGenericOverride d
+--   ) => PPGenericOverride (a, b, c, d) where
+--   ppGenericOverride (a, b, c, d) = atomicMetaDoc $ pretty
+--     ( PPGenericOverrideToPretty a
+--     , PPGenericOverrideToPretty b
+--     , PPGenericOverrideToPretty c
+--     , PPGenericOverrideToPretty d
+--     )
+--
+-- instance {-# OVERLAPS #-}
+--   ( PPGenericOverride a
+--   , PPGenericOverride b
+--   , PPGenericOverride c
+--   , PPGenericOverride d
+--   , PPGenericOverride e
+--   ) => PPGenericOverride (a, b, c, d, e) where
+--   ppGenericOverride (a, b, c, d, e) = atomicMetaDoc $ pretty
+--     ( PPGenericOverrideToPretty a
+--     , PPGenericOverrideToPretty b
+--     , PPGenericOverrideToPretty c
+--     , PPGenericOverrideToPretty d
+--     , PPGenericOverrideToPretty e
+--     )
 
 
 instance {-# OVERLAPS #-} PPGenericOverride v => PPGenericOverride (Maybe v) where
@@ -326,13 +459,13 @@ instance (GPretty f, GPretty g) => GPretty (f :*: g) where
       x' = gpretty x
       y' = gpretty y
 
-instance GPretty f => GPretty (M1 D ('MetaData a b c d) f) where
+instance GPretty x => GPretty (M1 D ('MetaData a b c d) x) where
   gpretty = gpretty . unM1
 
-instance GPretty f => GPretty (M1 S ('MetaSel 'Nothing b c d) f) where
+instance GPretty x => GPretty (M1 S ('MetaSel 'Nothing b c d) x) where
   gpretty = gpretty . unM1
 
-instance (KnownSymbol name, GPretty f, GFields f) => GPretty (M1 C ('MetaCons name _fixity 'False) f) where
+instance (KnownSymbol name, GPretty x, GFields x) => GPretty (M1 C ('MetaCons name _fixity 'False) x) where
   gpretty (M1 x) =
     constructorAppMetaDoc constructor args
     where
@@ -345,12 +478,15 @@ class GFields a where
   gfields :: a ix -> DList (MetaDoc ann)
 
 instance GFields U1 where
+  {-# INLINE gfields #-}
   gfields = const mempty
 
-instance GPretty f => GFields (M1 S ('MetaSel a b c d) f) where
+instance GPretty x => GFields (M1 S ('MetaSel a b c d) x) where
+  {-# INLINABLE gfields #-}
   gfields = DList.singleton . gpretty . unM1
 
 instance (GFields f, GFields g) => GFields (f :*: g) where
+  {-# INLINABLE gfields #-}
   gfields (f :*: g) = gfields f <> gfields g
 
 
@@ -365,11 +501,14 @@ class GCollectRecord a where
   gcollectRecord :: a ix -> DList (MapEntry Text (MetaDoc ann))
 
 instance (KnownSymbol name, GPretty a) => GCollectRecord (M1 S ('MetaSel ('Just name) su ss ds) a) where
+  {-# INLINABLE gcollectRecord #-}
   gcollectRecord (M1 x) =
     DList.singleton (T.pack (symbolVal (Proxy @name)) :-> gpretty x)
 
 instance (GCollectRecord f, GCollectRecord g) => GCollectRecord (f :*: g) where
+  {-# INLINABLE gcollectRecord #-}
   gcollectRecord (f :*: g) = gcollectRecord f <> gcollectRecord g
 
 instance GCollectRecord U1 where
+  {-# INLINABLE gcollectRecord #-}
   gcollectRecord = const mempty
