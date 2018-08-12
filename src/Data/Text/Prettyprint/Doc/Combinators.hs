@@ -12,6 +12,7 @@
 --
 ----------------------------------------------------------------------------
 
+{-# LANGUAGE CPP                 #-}
 {-# LANGUAGE DeriveFoldable      #-}
 {-# LANGUAGE DeriveFunctor       #-}
 {-# LANGUAGE DeriveTraversable   #-}
@@ -92,12 +93,15 @@ import qualified Data.IntSet as IS
 import Data.List.NonEmpty (NonEmpty(..))
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
-import Data.Semigroup
 import Data.Set (Set)
 import Data.Vector (Vector)
 import qualified Data.Vector as V
 import Debug.Trace
 import GHC.Stack (CallStack, SrcLoc(..), getCallStack, prettySrcLoc)
+
+#if !MIN_VERSION_base(4, 11, 0)
+import Data.Semigroup ((<>))
+#endif
 
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
