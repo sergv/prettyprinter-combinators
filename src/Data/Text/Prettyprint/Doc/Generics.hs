@@ -12,6 +12,7 @@
 --
 ----------------------------------------------------------------------------
 
+{-# LANGUAGE CPP                  #-}
 {-# LANGUAGE DataKinds            #-}
 {-# LANGUAGE FlexibleContexts     #-}
 {-# LANGUAGE FlexibleInstances    #-}
@@ -42,7 +43,7 @@ import qualified Data.IntSet as IntSet
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
 import Data.Proxy
-import Data.Semigroup
+import Data.Semigroup as Semigroup
 import Data.Set (Set)
 import Data.Text (Text)
 import qualified Data.Text as T
@@ -269,7 +270,7 @@ instance {-# OVERLAPS #-} PPGenericOverride Char where
 instance {-# OVERLAPS #-} PPGenericOverride a => PPGenericOverride (Ratio a) where
   {-# INLINABLE ppGenericOverride #-}
   ppGenericOverride (x :% y) =
-    ppGenericOverride x <> atomicMetaDoc "/" <> ppGenericOverride y
+    ppGenericOverride x Semigroup.<> atomicMetaDoc "/" <> ppGenericOverride y
 
 instance {-# OVERLAPS #-} PPGenericOverride CallStack where
   {-# INLINE ppGenericOverride #-}
@@ -328,8 +329,10 @@ instance {-# OVERLAPS #-} PPGenericOverride TH.Range              where ppGeneri
 instance {-# OVERLAPS #-} PPGenericOverride TH.Exp                where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Pat                where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Clause             where ppGenericOverride = gpretty . from
+#if MIN_VERSION_template_haskell(2, 12, 0)
 instance {-# OVERLAPS #-} PPGenericOverride TH.DerivStrategy      where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.DerivClause        where ppGenericOverride = gpretty . from
+#endif
 instance {-# OVERLAPS #-} PPGenericOverride TH.FunDep             where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Overlap            where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Callconv           where ppGenericOverride = gpretty . from
@@ -348,8 +351,10 @@ instance {-# OVERLAPS #-} PPGenericOverride TH.FamilyResultSig    where ppGeneri
 instance {-# OVERLAPS #-} PPGenericOverride TH.InjectivityAnn     where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.TypeFamilyHead     where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Role               where ppGenericOverride = gpretty . from
+#if MIN_VERSION_template_haskell(2, 12, 0)
 instance {-# OVERLAPS #-} PPGenericOverride TH.PatSynArgs         where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.PatSynDir          where ppGenericOverride = gpretty . from
+#endif
 instance {-# OVERLAPS #-} PPGenericOverride TH.Dec                where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Info               where ppGenericOverride = gpretty . from
 

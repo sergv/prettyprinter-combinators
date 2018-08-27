@@ -21,11 +21,11 @@ module Data.Text.Prettyprint.Doc.Combinators.Basic
   ) where
 
 import Data.Foldable
-import Data.Semigroup
+import Data.Semigroup as Semigroup
 import Data.Text.Prettyprint.Doc as PP
 
 (##) :: Doc ann -> Doc ann -> Doc ann
-(##) x y = PP.nest 2 $ x <> PP.line <> y
+(##) x y = PP.nest 2 $ x Semigroup.<> PP.line <> y
 
 {-# INLINABLE ppListWithDelimSep #-}
 ppListWithDelimSep
