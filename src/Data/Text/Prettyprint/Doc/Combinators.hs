@@ -64,6 +64,7 @@ module Data.Text.Prettyprint.Doc.Combinators
   , ppDList
   , ppDListWith
   , ppListWithDelim
+  , ppAssocList
   , ppAssocListWith
   , ppAssocListWithSep
   , ppByteString
@@ -256,6 +257,10 @@ ppListWithDelim
 ppListWithDelim = ppListWithDelimSep separator
   where
     separator = ","
+
+ppAssocList :: (Pretty k, Pretty v) => [(k, v)] -> Doc ann
+ppAssocList =
+  ppAssocListWith pretty pretty
 
 ppAssocListWith :: (k -> Doc ann) -> (v -> Doc ann) -> [(k, v)] -> Doc ann
 ppAssocListWith =
