@@ -161,10 +161,10 @@ ppDictHeader header entries =
 ppDictAssocList :: [MapEntry T.Text (Doc ann)] -> Doc ann
 ppDictAssocList entries = ppListWithDelim PP.lbrace PP.rbrace entries'
   where
-    entries' = map (ppMapEntryWith (PP.fillBreak maxWidth . pretty) id) entries
+    entries' = flip map entries $ \entry ->
+      ppMapEntryWith (PP.fillBreak maxWidth . pretty) id entry `PP.flatAlt`
+      ppMapEntryWith pretty id entry
     maxWidth = maximum $ map (\(k :-> _) -> T.length k) entries
-
-
 
 ppList :: Pretty a => [a] -> Doc ann
 ppList = ppListWith pretty
