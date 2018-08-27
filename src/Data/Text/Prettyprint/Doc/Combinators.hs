@@ -129,7 +129,7 @@ docFromText :: T.Text -> Doc ann
 docFromText = pretty . TL.fromStrict
 
 
-infix 0 :->
+infixr 0 :->
 
 data MapEntry k v = k :-> v
   deriving (Eq, Ord, Show, Functor, Foldable, Traversable)
@@ -146,7 +146,7 @@ ppMapEntryWithSep sep f g (x :-> y) =
 instance (Pretty k, Pretty v) => Pretty (MapEntry k v) where
   pretty = ppMapEntryWith pretty pretty
 
-infix 0 -->
+infixr 0 -->
 
 -- | Helper to make constructing 'MapEntry' pairs easier by calling
 -- pretty on value.
