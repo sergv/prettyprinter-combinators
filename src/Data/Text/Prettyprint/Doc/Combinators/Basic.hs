@@ -24,6 +24,8 @@ import Data.Foldable
 import Data.Semigroup as Semigroup
 import Data.Text.Prettyprint.Doc as PP
 
+infixr 6 ##
+
 (##) :: Doc ann -> Doc ann -> Doc ann
 (##) x y = PP.nest 2 $ x Semigroup.<> PP.line <> y
 
