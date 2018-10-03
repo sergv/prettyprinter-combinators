@@ -9,9 +9,9 @@ synopsis:
 description:
   TODO
 license:
-  BSD3
--- license-file:
---   LICENSE
+  BSD2
+license-file:
+  LICENSE
 author:
   Sergey Vinokurov
 maintainer:

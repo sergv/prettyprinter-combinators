@@ -2,14 +2,9 @@
 -- |
 -- Module      :  Data.Text.Prettyprint.Doc.TH.Utils
 -- Copyright   :  (c) Sergey Vinokurov 2018
--- License     :  BSD3-style (see LICENSE)
---
+-- License     :  BSD2 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
 -- Created     :  28 March 2018
--- Stability   :
--- Portability :
---
---
 ----------------------------------------------------------------------------
 
 {-# LANGUAGE CPP                 #-}
