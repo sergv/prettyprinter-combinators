@@ -14,6 +14,7 @@
 
 {-# LANGUAGE GADTs           #-}
 {-# LANGUAGE TemplateHaskell #-}
+{-# LANGUAGE TypeOperators   #-}
 
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -39,7 +40,7 @@ import Data.Vector (Vector)
 import qualified Data.Vector as Vector
 
 import Data.Text.Prettyprint.Doc
-import Data.Text.Prettyprint.Doc.TH
+-- import Data.Text.Prettyprint.Doc.TH
 
 data Test = Test
   { testSet         :: Maybe (Set Int)
@@ -57,14 +58,25 @@ data Test2 =
 
 data List a = Nil | Cons a (List a)
 
+type Foo = Int
+type a :+: b = Either a b
+
 -- Make types available in type environment of following splices.
 $(return [])
+
+
+ppFoo :: Foo -> Doc ann
+ppFoo = $(testPP [t| forall b. (Ord b, b ~ Int) => List (Maybe b) |])
+
 
 -- ppTest :: Test -> Doc ann
 -- ppTest = $(derivePP ''Test)
 
-ppTest2 :: Test2 -> Doc ann
-ppTest2 = $(derivePP [t| Test2 |])
+-- ppTest2 :: Test2 -> Doc ann
+-- ppTest2 = $(derivePP [t| Test2 |])
+
+-- ppFoo :: Foo -> Doc ann
+-- ppFoo = $(derivePP [t| Foo |])
 
 -- ppList :: List Int -> Doc ann
 -- ppList = $(derivePP [t| List Int |])

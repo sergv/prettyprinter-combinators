@@ -13,7 +13,10 @@
 ----------------------------------------------------------------------------
 
 {-# LANGUAGE BangPatterns               #-}
+{-# LANGUAGE DeriveFoldable             #-}
+{-# LANGUAGE DeriveFunctor              #-}
 {-# LANGUAGE DeriveGeneric              #-}
+{-# LANGUAGE DeriveTraversable          #-}
 {-# LANGUAGE FlexibleContexts           #-}
 {-# LANGUAGE GeneralizedNewtypeDeriving #-}
 {-# LANGUAGE LambdaCase                 #-}
@@ -25,6 +28,7 @@
 
 module Data.Text.Prettyprint.Doc.TH
   ( derivePP
+  , expandTypeSynsPP
   , testPP
   ) where
 
@@ -36,6 +40,9 @@ import Control.Monad.Reader
 import Control.Monad.State.Strict
 import Control.Monad.Writer.Strict hiding ((<>))
 
+import qualified Data.ByteString.Char8 as C8
+import qualified Data.ByteString.Lazy.Char8 as CL8
+import qualified Data.ByteString.Short as ShortBS
 import Data.Coerce
 import Data.Foldable
 import qualified Data.List as L
@@ -44,6 +51,8 @@ import qualified Data.Map.Strict as M
 import Data.Semigroup
 import Data.Set (Set)
 import qualified Data.Set as S
+import qualified Data.Text as T
+import qualified Data.Text.Lazy as TL
 import Data.Traversable
 import GHC.Generics (Generic)
 import GHC.Stack (HasCallStack)
@@ -51,6 +60,7 @@ import GHC.Stack (HasCallStack)
 import Data.Text.Prettyprint.Doc
 import Data.Text.Prettyprint.Doc.Combinators as PP
 import Data.Text.Prettyprint.Doc.Generics
+import Data.Text.Prettyprint.Doc.TH.Utils
 import Data.Text.Prettyprint.Doc.MetaDoc as MetaPP
 -- import Data.Text.Prettyprint.Doc.Show
 import Language.Haskell.TH
@@ -65,24 +75,65 @@ testPP
   -> ExpQ
 testPP typ = do
   typ' <- typ
+  case toTHType typ' of
+    Left err ->
+      fail $ displayDocString $ ppDictHeader
+        "Failed to obtain THType from input type"
+        [ "error"  --> err
+        , "type"   :-> ppGeneric typ'
+        , "pprint" :-> pretty (pprint typ')
+        ]
+    Right thtyp ->
+      fail $ displayDocString $ ppDictHeader
+        "testPP"
+        [ "type"   :-> ppGeneric typ'
+        , "pprint" :-> pretty (pprint typ')
+        , "THType" --> thtyp
+        ]
+
+expandTypeSynsPP
+  :: HasCallStack
+  => TypeQ -- ^ Name of type to derive function for.
+  -> ExpQ
+expandTypeSynsPP typ = do
+  typ'     <- typ
+  expanded <- expandTypeSynonyms typ'
   fail $ displayDocString $ ppDictHeader
     "testPP"
-    [ "type"   :-> ppGeneric typ'
-    , "pprint" :-> pretty (pprint typ')
+    [ "type"             :-> ppGeneric typ'
+    , "pprint"           :-> pretty (pprint typ')
+    , "expanded"         :-> ppGeneric expanded
+    , "expanded(pprint)" :-> pretty (pprint expanded)
     ]
 
 
-newtype TypeName = TypeName { unTypeName :: Name }
-  deriving (Eq, Ord, Show, Generic)
-
-instance Pretty TypeName where
-  pretty = viaShow
-
-newtype TypeVarName = TypeVarName { unTypeVarName :: Name }
-  deriving (Eq, Ord, Show, Generic)
-
-instance Pretty TypeVarName where
-  pretty = viaShow
+expandTypeSynonyms :: Type -> Q Type
+expandTypeSynonyms = go
+  where
+    go typ = case typ of
+      ForallT binders context t ->
+        ForallT binders <$> traverse go context <*> go t
+      AppT f x           -> AppT <$> go f <*> go x
+      SigT t kind        -> SigT <$> go t <*> pure kind
+      VarT{}             -> pure typ
+      ConT{}             -> pure typ
+      PromotedT{}        -> pure typ
+      InfixT  t1 name t2 -> InfixT <$> go t1 <*> pure name <*> go t2
+      UInfixT t1 name t2 -> UInfixT <$> go t1 <*> pure name <*> go t2
+      ParensT t          -> ParensT <$> go t
+      TupleT{}           -> pure typ
+      UnboxedTupleT{}    -> pure typ
+      UnboxedSumT{}      -> pure typ
+      ArrowT             -> pure typ
+      EqualityT          -> pure typ
+      ListT              -> pure typ
+      PromotedTupleT{}   -> pure typ
+      PromotedNilT       -> pure typ
+      PromotedConsT      -> pure typ
+      StarT              -> pure typ
+      ConstraintT        -> pure typ
+      LitT{}             -> pure typ
+      WildCardT          -> pure typ
 
 
 -- newtype FunctionName = FunctionName { unFunctionName :: Name }
@@ -108,7 +159,7 @@ applyFunction1 (Function1 f) = appE f
 
 
 newtype GenState = GenState
-  { gsPrinterCache :: Map DecomposedType Function1
+  { gsPrinterCache :: Map (DecomposedType TypeName) Function1
   } deriving (Generic)
 
 instance Pretty GenState where
@@ -119,13 +170,19 @@ type M = WriterT [DecQ] (StateT GenState Q)
 liftQ :: Q a -> M a
 liftQ = lift . lift
 
-defaultPrinters :: HasCallStack => [(DecomposedType, Function1)]
+defaultPrinters :: HasCallStack => [(DecomposedType TypeName, Function1)]
 defaultPrinters =
-  [ (atomicType $ TopType $ TypeName ''Int,    Function1 [e| MetaPP.metaDocInt |])
-  , (atomicType $ TopType $ TypeName ''Double, Function1 [e| MetaPP.metaDocDouble |])
+  [ (atomicType $ TypeName ''Int,                     Function1 [e| MetaPP.metaDocInt |])
+  , (atomicType $ TypeName ''Double,                  Function1 [e| MetaPP.metaDocDouble |])
+  , (atomicType $ TypeName ''String,                  Function1 [e| MetaPP.stringMetaDoc |])
+  , (atomicType $ TypeName ''T.Text,                  Function1 [e| MetaPP.strictTextMetaDoc |])
+  , (atomicType $ TypeName ''TL.Text,                 Function1 [e| MetaPP.lazyTextMetaDoc |])
+  , (atomicType $ TypeName ''C8.ByteString,           Function1 [e| MetaPP.strictByteStringMetaDoc |])
+  , (atomicType $ TypeName ''CL8.ByteString,          Function1 [e| MetaPP.lazyByteStringMetaDoc |])
+  , (atomicType $ TypeName ''ShortBS.ShortByteString, Function1 [e| MetaPP.shortByteStringMetaDoc |])
   ]
   where
-    atomicType :: ToplevelType -> DecomposedType
+    atomicType :: a -> DecomposedType a
     atomicType tt = DecomposedType
       { dtConstructor = tt
       , dtArgs        = []
@@ -156,10 +213,10 @@ data TypeInfo = TypeInfo
 
 getTypeInfo
   :: HasCallStack
-  => Name -- ^ Type name, E.g. 'GHC.Types.Int'.
+  => TypeName -- ^ Type name, E.g. 'GHC.Types.Int'.
   -> Q TypeInfo
 getTypeInfo typeName = do
-  info <- reify typeName
+  info <- reify $ unTypeName typeName
   dec  <- case info of
     TyConI  d            -> pure d
     FamilyI d _instances -> pure d
@@ -178,7 +235,7 @@ getTypeInfo typeName = do
       , tiBndrs        = tyVarBndrs
       , tiConstructors = [constructor]
       }
-    -- TySynD typeName tyVars -> undefined
+    -- TySynD name tyVars typ -> undefined
     -- DataInstD -> undefined
     -- NewtypeInstD -> undefined
     unexpected -> errorDoc $
@@ -205,11 +262,6 @@ applyToTypes typ =
 applyToPVars :: Name -> [Name] -> PatQ
 applyToPVars typ = conP typ . map varP
 
-getBndrVar :: TyVarBndr -> TypeVarName
-getBndrVar = \case
-  PlainTV  name       -> TypeVarName name
-  KindedTV name _kind -> TypeVarName name
-
 updateBndrVar :: TypeVarName -> TyVarBndr -> TyVarBndr
 updateBndrVar (TypeVarName name) = \case
   PlainTV  _      -> PlainTV name
@@ -217,7 +269,7 @@ updateBndrVar (TypeVarName name) = \case
 
 -- | Type at the top of the application chain.
 data ToplevelType =
-    TopType TypeName
+    TopType !TypeName
   | TopTuple !Int
   | TopArrow
   | TopList
@@ -226,16 +278,16 @@ data ToplevelType =
 instance Pretty ToplevelType where
   pretty = ppGeneric
 
-data DecomposedType = DecomposedType
-  { dtConstructor :: ToplevelType
+data DecomposedType a = DecomposedType
+  { dtConstructor :: a
   , dtArgs        :: [Type]
   , dtCxt         :: Cxt
-  } deriving (Eq, Generic, Ord, Show)
+  } deriving (Eq, Ord, Show, Generic, Functor, Foldable, Traversable)
 
-instance Pretty DecomposedType where
+instance Pretty a => Pretty (DecomposedType a) where
   pretty = ppGeneric
 
-decomposeType :: HasCallStack => Type -> Q DecomposedType
+decomposeType :: HasCallStack => Type -> Q (DecomposedType ToplevelType)
 decomposeType bigType = do
   -- traceM $ displayDocString $ ppDictHeader "decomposeType"
   --   [ "bigType" :-> ppGeneric bigType
@@ -247,7 +299,7 @@ decomposeType bigType = do
     ]
   pure res
   where
-    go :: [Type] -> Type -> ReaderT EqualityConstraints Q DecomposedType
+    go :: [Type] -> Type -> ReaderT EqualityConstraints Q (DecomposedType ToplevelType)
     go acc = \case
       ForallT _bndrs context t -> do
         eqConstraints <- lift $ inferEqualityConstraints context
@@ -300,39 +352,39 @@ decomposeType bigType = do
 getPrinterForType
   :: HasCallStack
   => Type -- ^ Original type for prettyprining of messages.
-  -> DecomposedType
+  -> DecomposedType ToplevelType
   -> M Function1
-getPrinterForType origType dt@DecomposedType{dtConstructor} = do
-  cached <- gets (M.lookup dt . gsPrinterCache)
-  cache <- get
-  case cached of
-    Just f  -> do
-      traceM $ displayDocString $ ppDictHeader "getPrinterForType/cached"
-        [ "origType" :-> pretty (pprint origType)
-        , "dt"       :-> pretty dt
-        , "cached"   :-> ppGeneric cached
-        ]
-      pure f
-    Nothing -> do
-      traceM $ displayDocString $ ppDictHeader "getPrinterForType/uncached"
-        [ "origType" :-> pretty (pprint origType)
-        , "dt"       :-> pretty dt
-        , "cache"    :-> pretty cache
-        ]
-      case dtConstructor of
-        TopType name -> genPPForKindStar dt $ unTypeName name
-        -- TopVar  name -> do
-        --   traceM $ displayDocString $ ppDictHeader "getPrinterForType/TopVar"
-        --     [ "dt"   --> dt
-        --     , "name" --> name
-        --     ]
-        --   genPPForKindStar dt $ unTypeVarName name
-        TopArrow     -> pure $ Function1
-          [e| \_ -> MetaPP.stringMetaDoc $(stringE $ "<function : " ++ pprint origType ++ ">") |]
-        TopList      -> genPPForList dt
-        TopTuple _   -> genPPForTuple dt
-
-
+getPrinterForType origType dt@DecomposedType{dtConstructor} =
+  case dtConstructor of
+    TopType name -> do
+      let dt' = name <$ dt
+      cached <- gets (M.lookup dt' . gsPrinterCache)
+      cache <- get
+      case cached of
+        Just f  -> do
+          traceM $ displayDocString $ ppDictHeader "getPrinterForType/cached"
+            [ "origType"        :-> pretty (pprint origType)
+            , "decomposed type" :-> pretty dt'
+            , "cached"          :-> ppGeneric cached
+            ]
+          pure f
+        Nothing -> do
+          traceM $ displayDocString $ ppDictHeader "getPrinterForType/uncached"
+            [ "origType"        :-> pretty (pprint origType)
+            , "decomposed type" :-> pretty dt'
+            , "cache"           :-> pretty cache
+            ]
+          genPPForKindStar dt'
+    -- TopVar  name -> do
+    --   traceM $ displayDocString $ ppDictHeader "getPrinterForType/TopVar"
+    --     [ "dt"   --> dt
+    --     , "name" --> name
+    --     ]
+    --   genPPForKindStar dt $ unTypeVarName name
+    TopArrow     -> pure $ Function1
+      [e| \_ -> MetaPP.stringMetaDoc $(stringE $ "<function : " ++ pprint origType ++ ">") |]
+    TopList      -> genPPForList dt
+    TopTuple _   -> genPPForTuple dt
 
 mkClause :: HasCallStack => Map TypeVarName Type -> Cxt -> Con -> M (PatQ, ExpQ)
 mkClause tenv tenvCxt = \case
@@ -349,7 +401,7 @@ mkClause tenv tenvCxt = \case
       decomposed <- liftQ $ do
         eqConstraints <- inferEqualityConstraints tenvCxt
         decomposeType =<< applyEqualityConstraints eqConstraints typ'
-      printer    <- getPrinterForType typ' $ decomposed -- { dtCxt = dtCxt decomposed }
+      printer    <- getPrinterForType typ' decomposed
       pure (printer, name)
     let body :: ExpQ
         body =
@@ -373,8 +425,8 @@ mkClause tenv tenvCxt = \case
 
 -- | Generate prettyprinter for lists applied to specific types.
 genPPForList
-  :: HasCallStack
-  => DecomposedType
+  :: (HasCallStack, Pretty a)
+  => DecomposedType a
   -> M Function1
 genPPForList dt@DecomposedType{dtArgs} = do
   arg <- case dtArgs of
@@ -382,7 +434,7 @@ genPPForList dt@DecomposedType{dtArgs} = do
     invalid -> errorDoc $ ppDictHeader
       ("Expected list constructor applied to single type argument, but got" <+> pretty (length invalid) <+> "arguments")
       [ "arguments"       :-> ppGeneric invalid
-      , "decomposed tyep" --> dt
+      , "decomposed type" --> dt
       ]
   printer <- getPrinterForType arg =<< liftQ (decomposeType arg)
   pure $ Function1 [e| MetaPP.atomicMetaDoc . PP.ppListWith (MetaPP.mdPayload . $(unFunction1 printer)) |]
@@ -390,7 +442,7 @@ genPPForList dt@DecomposedType{dtArgs} = do
 -- | Generate prettyprinter for tuples applied to specific types.
 genPPForTuple
   :: HasCallStack
-  => DecomposedType
+  => DecomposedType a
   -> M Function1
 genPPForTuple DecomposedType{dtArgs} = do
   printers <- traverse (\typ -> getPrinterForType typ =<< liftQ (decomposeType typ)) dtArgs
@@ -405,18 +457,17 @@ genPPForTuple DecomposedType{dtArgs} = do
 
 genPPForKindStar
   :: HasCallStack
-  => DecomposedType -- ^ Type parameters of the constructor & context for variables within type parameters.
-  -> Name           -- ^ Type constructor or type variable.
-  -> M Function1    -- ^ Function that can print values of specified type.
-genPPForKindStar dt@DecomposedType{dtArgs, dtCxt} toplevelType = do
+  => DecomposedType TypeName -- ^ Type parameters of the constructor & context for variables within type parameters.
+  -> M Function1             -- ^ Function that can print values of specified type.
+genPPForKindStar dt@DecomposedType{dtConstructor, dtArgs, dtCxt} = do
   let typeParams  = dtArgs
       typeContext = dtCxt
-  TypeInfo{tiName, tiBndrs, tiConstructors} <- liftQ $ getTypeInfo toplevelType
+  TypeInfo{tiName, tiBndrs, tiConstructors} <- liftQ $ getTypeInfo dtConstructor
   tenv <- if length typeParams == length tiBndrs
           then pure $ M.fromList $ zip (map getBndrVar tiBndrs) typeParams
           else errorDoc $ ppDictHeader
             "Expected saturated type of kind 'Star' but got underappliedtype"
-            [ "constructor" :-> ppGeneric toplevelType
+            [ "constructor" :-> ppGeneric dtConstructor
             , "type params" :-> ppGeneric typeParams
             ]
   -- Generate new declaration and register it
@@ -437,7 +488,7 @@ genPPForKindStar dt@DecomposedType{dtArgs, dtCxt} toplevelType = do
   let sig :: DecQ
       sig = sigD funcName $ addQuantifiers (pure typeContext) $ -- forallT (PlainTV annTVar : tiBndrs) (pure tiCtx) $
               arrowT
-                `appT` applyToTypes toplevelType (map pure typeParams) -- (map getBndrVar tiBndrs)
+                `appT` applyToTypes (unTypeName dtConstructor) (map pure typeParams) -- (map getBndrVar tiBndrs)
                 `appT` applyToTypes ''MetaPP.MetaDoc [varT annTVar]
       cases :: [MatchQ]
       cases = map (\(pat, body) -> match pat (normalB body) []) clauses
@@ -641,8 +692,8 @@ substitute' substEnv substTyp =
 
 -- | Refresh all forall'ed variable names so that they won't clash with
 -- anything.
-_refreshType :: Type -> Q Type
-_refreshType = flip runReaderT mempty . go
+refreshType :: Type -> Q Type
+refreshType = flip runReaderT mempty . go
   where
     go :: Type -> ReaderT (Map TypeVarName Type) Q Type
     go typ = case typ of
@@ -681,7 +732,6 @@ _refreshType = flip runReaderT mempty . go
       LitT{}           -> pure typ
       WildCardT        -> pure typ
 
-
 addQuantifiers :: CxtQ -> TypeQ -> TypeQ
 addQuantifiers context typ = do
   typ' <- typ
@@ -690,7 +740,7 @@ addQuantifiers context typ = do
 -- | Like 'ordNub' and 'Data.List.nubBy'. Selects a key for each element and
 -- takes the nub based on that key.
 ordNub :: Ord a => [a] -> [a]
-ordNub l = go S.empty l
+ordNub = go S.empty
   where
     go !_ [] = []
     go !s (x:xs)
