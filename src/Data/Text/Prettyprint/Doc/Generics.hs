@@ -26,7 +26,10 @@
 {-# LANGUAGE TypeOperators        #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Data.Text.Prettyprint.Doc.Generics (ppGeneric) where
+module Data.Text.Prettyprint.Doc.Generics
+  ( ppGeneric
+  , PPGenericOverride(..)
+  ) where
 
 import Data.Bimap (Bimap)
 import qualified Data.ByteString.Char8 as C8
@@ -175,7 +178,7 @@ instance (GPretty f, GPretty g) => GPretty (f :+: g) where
     L1 x -> gpretty x
     R1 y -> gpretty y
 
--- Use 'PPGenericDeriving' to give it a chance to fire before standard 'Pretty'.
+-- 'PPGenericDeriving' to give it a chance to fire before standard 'Pretty'.
 instance PPGenericOverride a => GPretty (K1 i a) where
   gpretty = ppGenericOverride . unK1
 
