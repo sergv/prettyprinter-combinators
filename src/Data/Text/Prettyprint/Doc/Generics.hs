@@ -24,6 +24,7 @@
 module Data.Text.Prettyprint.Doc.Generics
   ( ppGeneric
   , PPGenericOverride(..)
+  , Pretty(..)
   ) where
 
 import Data.Bimap (Bimap)
