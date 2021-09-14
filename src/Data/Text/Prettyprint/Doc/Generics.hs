@@ -40,6 +40,7 @@ import Data.HashSet (HashSet)
 import Data.Int
 import Data.IntMap (IntMap)
 import qualified Data.IntSet as IntSet
+import Data.Kind
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
 import Data.Proxy
@@ -54,6 +55,7 @@ import Data.Word
 import GHC.Generics
 import GHC.Real (Ratio(..))
 import GHC.Stack (CallStack)
+import GHC.ForeignPtr (ForeignPtr(..))
 import GHC.TypeLits
 import Numeric.Natural
 
@@ -161,7 +163,7 @@ import qualified Language.Haskell.TH.Syntax as TH
 ppGeneric :: (Generic a, GPretty (Rep a)) => a -> Doc ann
 ppGeneric = mdPayload . gpretty . from
 
-class GPretty (a :: * -> *) where
+class GPretty (a :: Type -> Type) where
   gpretty :: a ix -> MetaDoc ann
 
 instance GPretty V1 where
@@ -307,6 +309,8 @@ instance {-# OVERLAPS #-} PPGenericOverride ShortBS.ShortByteString where
   {-# INLINE ppGenericOverride #-}
   ppGenericOverride = shortByteStringMetaDoc
 
+instance {-# OVERLAPS #-} PPGenericOverride (ForeignPtr a)        where ppGenericOverride = atomicMetaDoc . pretty . show
+
 instance {-# OVERLAPS #-} PPGenericOverride TH.OccName            where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.NameFlavour        where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.PkgName            where ppGenericOverride = gpretty . from
@@ -321,6 +325,7 @@ instance {-# OVERLAPS #-} PPGenericOverride TH.SourceStrictness   where ppGeneri
 instance {-# OVERLAPS #-} PPGenericOverride TH.Bang               where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Con                where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Lit                where ppGenericOverride = gpretty . from
+instance {-# OVERLAPS #-} PPGenericOverride TH.Bytes              where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Stmt               where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Guard              where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Body               where ppGenericOverride = gpretty . from

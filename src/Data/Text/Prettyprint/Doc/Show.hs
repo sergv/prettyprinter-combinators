@@ -50,3 +50,6 @@ ppValue = \case
   Float x         -> stringMetaDoc x
   Char x          -> stringMetaDoc x
   String x        -> stringMetaDoc x
+  Date x          -> stringMetaDoc x
+  Time x          -> stringMetaDoc x
+  Quote x         -> stringMetaDoc x
