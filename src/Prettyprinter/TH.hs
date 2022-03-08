@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Text.Prettyprint.Doc.TH
+-- Module      :  Prettyprinter.TH
 -- Copyright   :  (c) Sergey Vinokurov 2018
 -- License     :  BSD2 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
@@ -8,8 +8,6 @@
 ----------------------------------------------------------------------------
 
 {-# LANGUAGE BangPatterns               #-}
-{-# LANGUAGE DeriveFoldable             #-}
-{-# LANGUAGE DeriveFunctor              #-}
 {-# LANGUAGE DeriveGeneric              #-}
 {-# LANGUAGE DeriveTraversable          #-}
 {-# LANGUAGE FlexibleContexts           #-}
@@ -21,14 +19,11 @@
 {-# LANGUAGE TemplateHaskell            #-}
 {-# LANGUAGE TupleSections              #-}
 
-module Data.Text.Prettyprint.Doc.TH
+module Prettyprinter.TH
   ( derivePP
   , expandTypeSynsPP
   , testPP
   ) where
-
-  -- ( testPP
-  -- ) where
 
 import Control.Arrow (first, second)
 import Control.Monad.Reader
@@ -52,14 +47,14 @@ import Data.Traversable
 import GHC.Generics (Generic)
 import GHC.Stack (HasCallStack)
 
-import Data.Text.Prettyprint.Doc
-import Data.Text.Prettyprint.Doc.Combinators as PP
-import Data.Text.Prettyprint.Doc.Generics
-import Data.Text.Prettyprint.Doc.TH.Utils
-import Data.Text.Prettyprint.Doc.MetaDoc as MetaPP
--- import Data.Text.Prettyprint.Doc.Show
 import Language.Haskell.TH
 -- import Language.Haskell.TH.Lib
+import Prettyprinter
+import Prettyprinter.Combinators as PP
+import Prettyprinter.Generics
+import Prettyprinter.MetaDoc as MetaPP
+import Prettyprinter.TH.Utils
+-- import Prettyprinter.Show
 
 import Debug.Trace
 

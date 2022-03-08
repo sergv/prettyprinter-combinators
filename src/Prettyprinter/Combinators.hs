@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Text.Prettyprint.Doc.Combinators
+-- Module      :  Prettyprinter.Combinators
 -- Copyright   :  (c) Sergey Vinokurov 2018
 -- License     :  BSD2 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
@@ -14,7 +14,7 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Data.Text.Prettyprint.Doc.Combinators
+module Prettyprinter.Combinators
   ( Pretty(..)
   , PP.Doc
   , putDocLn
@@ -101,11 +101,11 @@ import Data.Semigroup ((<>))
 
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
-import Data.Text.Prettyprint.Doc (Pretty(..), Doc, (<+>))
-import qualified Data.Text.Prettyprint.Doc as PP
-import Data.Text.Prettyprint.Doc.Combinators.Basic
-import Data.Text.Prettyprint.Doc.MetaDoc
-import qualified Data.Text.Prettyprint.Doc.Render.Text as PP.Render
+import Prettyprinter (Pretty(..), Doc, (<+>))
+import qualified Prettyprinter as PP
+import Prettyprinter.Combinators.Basic
+import Prettyprinter.MetaDoc
+import qualified Prettyprinter.Render.Text as PP.Render
 
 putDocLn :: Doc ann -> IO ()
 putDocLn x = do

@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Text.Prettyprint.Doc.Generics
+-- Module      :  Prettyprinter.Generics
 -- Copyright   :  (c) Sergey Vinokurov 2018
 -- License     :  BSD2 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
@@ -21,7 +21,7 @@
 {-# LANGUAGE TypeOperators        #-}
 {-# LANGUAGE UndecidableInstances #-}
 
-module Data.Text.Prettyprint.Doc.Generics
+module Prettyprinter.Generics
   ( ppGeneric
   , PPGenericOverride(..)
   , Pretty(..)
@@ -59,9 +59,9 @@ import GHC.ForeignPtr (ForeignPtr(..))
 import GHC.TypeLits
 import Numeric.Natural
 
-import Data.Text.Prettyprint.Doc
-import Data.Text.Prettyprint.Doc.Combinators
-import Data.Text.Prettyprint.Doc.MetaDoc
+import Prettyprinter
+import Prettyprinter.Combinators
+import Prettyprinter.MetaDoc
 
 import qualified Language.Haskell.TH as TH
 import qualified Language.Haskell.TH.Syntax as TH

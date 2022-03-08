@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Text.Prettyprint.Doc.Data
+-- Module      :  Prettyprinter.Data
 -- Copyright   :  (c) Sergey Vinokurov 2018
 -- License     :  BSD2 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
@@ -11,17 +11,17 @@
 {-# LANGUAGE Rank2Types          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Data.Text.Prettyprint.Doc.Data
+module Prettyprinter.Data
   ( ppData
   , ppDataSimple
   ) where
 
 import Data.Data
 import qualified Data.Generics
-import Data.Text.Prettyprint.Doc
-import qualified Data.Text.Prettyprint.Doc as PP
-import Data.Text.Prettyprint.Doc.Combinators
-import Data.Text.Prettyprint.Doc.MetaDoc
+import Prettyprinter
+import qualified Prettyprinter as PP
+import Prettyprinter.Combinators
+import Prettyprinter.MetaDoc
 
 -- $setup
 -- >>> :set -XDeriveDataTypeable

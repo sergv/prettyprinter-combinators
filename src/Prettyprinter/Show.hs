@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Text.Prettyprint.Doc.Show
+-- Module      :  Prettyprinter.Show
 -- Copyright   :  (c) Sergey Vinokurov 2018
 -- License     :  BSD2 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
@@ -10,13 +10,13 @@
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Data.Text.Prettyprint.Doc.Show (ppShow) where
+module Prettyprinter.Show (ppShow) where
 
 import qualified Data.Text as T
-import Data.Text.Prettyprint.Doc
-import qualified Data.Text.Prettyprint.Doc as PP
-import Data.Text.Prettyprint.Doc.Combinators
-import Data.Text.Prettyprint.Doc.MetaDoc
+import Prettyprinter
+import qualified Prettyprinter as PP
+import Prettyprinter.Combinators
+import Prettyprinter.MetaDoc
 import Text.Show.Pretty (parseValue, Value(..))
 
 ppShow :: Show a => a -> Doc ann

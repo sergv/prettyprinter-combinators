@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Text.Prettyprint.Doc.MetaDoc
+-- Module      :  Prettyprinter.MetaDoc
 -- Copyright   :  (c) Sergey Vinokurov 2018
 -- License     :  BSD2 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
@@ -9,7 +9,7 @@
 
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Data.Text.Prettyprint.Doc.MetaDoc
+module Prettyprinter.MetaDoc
   ( DocKind(..)
   , MetaDoc
   , mdPayload
@@ -52,11 +52,11 @@ import Data.Int
 import Data.Semigroup as Semigroup
 import qualified Data.Text as T
 import qualified Data.Text.Lazy as TL
-import Data.Text.Prettyprint.Doc
-import qualified Data.Text.Prettyprint.Doc as PP
-import Data.Text.Prettyprint.Doc.Combinators.Basic
 import Data.Word
 import Numeric.Natural
+import Prettyprinter
+import qualified Prettyprinter as PP
+import Prettyprinter.Combinators.Basic
 
 data DocKind = Atomic | Composite
   deriving (Eq, Ord, Enum, Bounded)

@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Text.Prettyprint.Doc.Combinators.Basic
+-- Module      :  Prettyprinter.Combinators.Basic
 -- Copyright   :  (c) Sergey Vinokurov 2018
 -- License     :  BSD2 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
@@ -10,14 +10,14 @@
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
-module Data.Text.Prettyprint.Doc.Combinators.Basic
+module Prettyprinter.Combinators.Basic
   ( (##)
   , ppListWithDelimSep
   ) where
 
 import Data.Foldable
 import Data.Semigroup as Semigroup
-import Data.Text.Prettyprint.Doc as PP
+import Prettyprinter as PP
 
 infixr 6 ##
 

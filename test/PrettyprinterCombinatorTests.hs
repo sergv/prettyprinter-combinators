@@ -34,8 +34,8 @@ import qualified Data.Set as Set
 import Data.Vector (Vector)
 import qualified Data.Vector as Vector
 
-import Data.Text.Prettyprint.Doc
--- import Data.Text.Prettyprint.Doc.TH
+import Prettyprinter
+-- import Prettyprinter.TH
 
 data Test = Test
   { testSet         :: Maybe (Set Int)
@@ -60,8 +60,8 @@ type a :+: b = Either a b
 $(return [])
 
 
-ppFoo :: Foo -> Doc ann
-ppFoo = $(testPP [t| forall b. (Ord b, b ~ Int) => List (Maybe b) |])
+-- ppFoo :: Foo -> Doc ann
+-- ppFoo = $(testPP [t| forall b. (Ord b, b ~ Int) => List (Maybe b) |])
 
 
 -- ppTest :: Test -> Doc ann

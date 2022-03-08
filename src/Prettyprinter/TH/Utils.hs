@@ -1,6 +1,6 @@
 ----------------------------------------------------------------------------
 -- |
--- Module      :  Data.Text.Prettyprint.Doc.TH.Utils
+-- Module      :  Prettyprinter.TH.Utils
 -- Copyright   :  (c) Sergey Vinokurov 2018
 -- License     :  BSD2 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
@@ -19,7 +19,7 @@
 {-# LANGUAGE ScopedTypeVariables #-}
 {-# LANGUAGE StandaloneDeriving  #-}
 
-module Data.Text.Prettyprint.Doc.TH.Utils
+module Prettyprinter.TH.Utils
   ( Fix(..)
   , cata
   , ana
@@ -39,17 +39,16 @@ import Control.Monad.Except
 import Data.List.NonEmpty (NonEmpty(..))
 import Data.Map.Strict (Map)
 import qualified Data.Map.Strict as M
-import Data.Text.Prettyprint.Doc
-import Data.Text.Prettyprint.Doc.Generics
 import GHC.Generics (Generic)
 import qualified Language.Haskell.TH as TH
 import qualified Language.Haskell.TH.Syntax as Syn
+import Prettyprinter
+import Prettyprinter.Combinators
+import Prettyprinter.Generics
 
 #if !MIN_VERSION_base(4, 11, 0)
 import Data.Semigroup
 #endif
-
-import Data.Text.Prettyprint.Doc.Combinators
 
 newtype Fix f = Fix { unFix :: f (Fix f) }
 

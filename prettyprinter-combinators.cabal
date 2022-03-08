@@ -1,3 +1,5 @@
+cabal-version: 3.0
+
 -- Created     :  21 March 2018
 
 name:
@@ -9,7 +11,7 @@ synopsis:
 description:
   TODO
 license:
-  BSD2
+  BSD-2-Clause
 license-file:
   LICENSE
 author:
@@ -17,22 +19,20 @@ author:
 maintainer:
   Sergey Vinokurov <serg.foo@gmail.com>
 
-cabal-version:
-  >= 1.16
 build-type:
   Simple
 
 library
   exposed-modules:
-    Data.Text.Prettyprint.Doc.Combinators
-    Data.Text.Prettyprint.Doc.Data
-    Data.Text.Prettyprint.Doc.Generics
-    Data.Text.Prettyprint.Doc.Show
-    -- Data.Text.Prettyprint.Doc.TH
+    Prettyprinter.Combinators
+    Prettyprinter.Data
+    Prettyprinter.Generics
+    Prettyprinter.Show
+    -- Prettyprinter.TH
   other-modules:
-    Data.Text.Prettyprint.Doc.Combinators.Basic
-    Data.Text.Prettyprint.Doc.MetaDoc
-    -- Data.Text.Prettyprint.Doc.TH.Utils
+    Prettyprinter.Combinators.Basic
+    Prettyprinter.MetaDoc
+    -- Prettyprinter.Utils
   hs-source-dirs:
     src
   build-depends:
@@ -43,7 +43,7 @@ library
     dlist,
     hashable,
     mtl,
-    prettyprinter,
+    prettyprinter >= 1.7,
     pretty-show,
     syb,
     template-haskell >= 2.10,
@@ -73,40 +73,40 @@ library
   ghc-prof-options:
     -fprof-auto
 
--- test-suite prettyprinter-combinator-tests
---   type:
---     exitcode-stdio-1.0
---   main-is:
---     test/PrettyprinterCombinatorTests.hs
---   hs-source-dirs:
---     . test
---   build-depends:
---     base,
---     containers,
---     prettyprinter,
---     prettyprinter-combinators,
---     unordered-containers,
---     vector
---   default-language:
---     Haskell2010
---   ghc-options:
---     -rtsopts
---     -main-is PrettyprinterCombinatorTests
---     -Wall
---     -fwarn-name-shadowing
---     -fno-warn-type-defaults
---   if impl(ghc >= 8.0)
---     ghc-options:
---       -Wall-missed-specialisations
---       -Wcompat
---       -Widentities
---       -Wincomplete-record-updates
---       -Wincomplete-uni-patterns
---       -Wmissing-exported-signatures
---   if impl(ghc >= 8.2)
---     ghc-options:
---       -Wcpp-undef
---       -Wmissing-home-modules
---       -Wunbanged-strict-patterns
---   ghc-prof-options:
---     -fprof-auto
+test-suite prettyprinter-combinator-tests
+  type:
+    exitcode-stdio-1.0
+  main-is:
+    test/PrettyprinterCombinatorTests.hs
+  hs-source-dirs:
+    . test
+  build-depends:
+    base,
+    containers,
+    prettyprinter,
+    prettyprinter-combinators,
+    unordered-containers,
+    vector
+  default-language:
+    Haskell2010
+  ghc-options:
+    -rtsopts
+    -main-is PrettyprinterCombinatorTests
+    -Wall
+    -fwarn-name-shadowing
+    -fno-warn-type-defaults
+  if impl(ghc >= 8.0)
+    ghc-options:
+      -Wall-missed-specialisations
+      -Wcompat
+      -Widentities
+      -Wincomplete-record-updates
+      -Wincomplete-uni-patterns
+      -Wmissing-exported-signatures
+  if impl(ghc >= 8.2)
+    ghc-options:
+      -Wcpp-undef
+      -Wmissing-home-modules
+      -Wunbanged-strict-patterns
+  ghc-prof-options:
+    -fprof-auto
