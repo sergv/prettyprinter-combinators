@@ -35,6 +35,7 @@ import qualified Data.ByteString.Short as ShortBS
 import Data.DList (DList)
 import qualified Data.DList as DList
 import Data.Foldable
+import Data.Functor.Compose
 import Data.HashMap.Strict (HashMap)
 import Data.HashSet (HashSet)
 import Data.Int
@@ -52,10 +53,10 @@ import qualified Data.Text.Lazy as TL
 import Data.Vector (Vector)
 import Data.Void
 import Data.Word
+import GHC.ForeignPtr (ForeignPtr(..))
 import GHC.Generics
 import GHC.Real (Ratio(..))
 import GHC.Stack (CallStack)
-import GHC.ForeignPtr (ForeignPtr(..))
 import GHC.TypeLits
 import Numeric.Natural
 
@@ -460,6 +461,10 @@ instance {-# OVERLAPS #-} PPGenericOverride v => PPGenericOverride (HashSet v) w
 instance {-# OVERLAPS #-} (PPGenericOverride k, PPGenericOverride v) => PPGenericOverride (HashMap k v) where
   ppGenericOverride =
     atomicMetaDoc . ppHashMapWith ppGenericOverrideDoc ppGenericOverrideDoc
+
+instance {-# OVERLAPS #-} PPGenericOverride (f (g a)) => PPGenericOverride (Compose f g a) where
+  ppGenericOverride =
+    ppGenericOverride . getCompose
 
 
 instance (GPretty f, GPretty g) => GPretty (f :*: g) where
