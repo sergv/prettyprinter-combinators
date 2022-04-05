@@ -2,15 +2,15 @@
 -- |
 -- Module      :  Prettyprinter.Generics
 -- Copyright   :  (c) Sergey Vinokurov 2018
--- License     :  BSD2 (see LICENSE)
+-- License     :  Apache-2.0 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
--- Created     :  24 March 2018
 ----------------------------------------------------------------------------
 
 {-# LANGUAGE CPP                  #-}
 {-# LANGUAGE DataKinds            #-}
 {-# LANGUAGE FlexibleContexts     #-}
 {-# LANGUAGE FlexibleInstances    #-}
+{-# LANGUAGE ImportQualifiedPost  #-}
 {-# LANGUAGE LambdaCase           #-}
 {-# LANGUAGE OverloadedStrings    #-}
 {-# LANGUAGE ScopedTypeVariables  #-}
@@ -27,27 +27,27 @@ module Prettyprinter.Generics
   ) where
 
 import Data.Bimap (Bimap)
-import qualified Data.ByteString.Char8 as C8
-import qualified Data.ByteString.Lazy.Char8 as CL8
-import qualified Data.ByteString.Short as ShortBS
+import Data.ByteString.Char8 qualified as C8
+import Data.ByteString.Lazy.Char8 qualified as CL8
+import Data.ByteString.Short qualified as ShortBS
 import Data.DList (DList)
-import qualified Data.DList as DList
+import Data.DList qualified as DList
 import Data.Foldable
 import Data.Functor.Compose
 import Data.HashMap.Strict (HashMap)
 import Data.HashSet (HashSet)
 import Data.Int
 import Data.IntMap (IntMap)
-import qualified Data.IntSet as IntSet
+import Data.IntSet qualified as IntSet
 import Data.Kind
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
 import Data.Proxy
-import Data.Semigroup as Semigroup
+import Data.Semigroup qualified as Semigroup
 import Data.Set (Set)
 import Data.Text (Text)
-import qualified Data.Text as T
-import qualified Data.Text.Lazy as TL
+import Data.Text qualified as T
+import Data.Text.Lazy qualified as TL
 import Data.Vector (Vector)
 import Data.Void
 import Data.Word
@@ -62,8 +62,8 @@ import Prettyprinter
 import Prettyprinter.Combinators
 import Prettyprinter.MetaDoc
 
-import qualified Language.Haskell.TH as TH
-import qualified Language.Haskell.TH.Syntax as TH
+import Language.Haskell.TH qualified as TH
+import Language.Haskell.TH.Syntax qualified as TH
 
 -- $setup
 -- >>> :set -XDeriveGeneric
@@ -478,7 +478,7 @@ instance GPretty x => GPretty (M1 D ('MetaData a b c d) x) where
 instance GPretty x => GPretty (M1 S ('MetaSel 'Nothing b c d) x) where
   gpretty = gpretty . unM1
 
-instance (KnownSymbol name, GPretty x, GFields x) => GPretty (M1 C ('MetaCons name _fixity 'False) x) where
+instance (KnownSymbol name, GFields x) => GPretty (M1 C ('MetaCons name _fixity 'False) x) where
   gpretty (M1 x) =
     constructorAppMetaDoc constructor args
     where

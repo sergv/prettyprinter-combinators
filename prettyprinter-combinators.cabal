@@ -7,9 +7,13 @@ version:
 synopsis:
   Some useful combinators for the prettyprinter package
 description:
-  TODO
+  Various utilities that make writing Pretty instances easier.
+
+  Notable utilites include automatic deriving of Pretty instance via
+  Generic, Data, or Show instance.
+
 license:
-  BSD-2-Clause
+  Apache-2.0
 license-file:
   LICENSE
 author:
@@ -33,6 +37,8 @@ common ghc-options
     -Wno-missed-specialisations
     -Wno-all-missed-specialisations
     -Wno-safe
+    -Wno-missing-safe-haskell-mode
+    -Wno-unsafe
 
   if impl(ghc >= 8.8)
     ghc-options:
@@ -49,11 +55,9 @@ library
     Prettyprinter.Data
     Prettyprinter.Generics
     Prettyprinter.Show
-    -- Prettyprinter.TH
   other-modules:
     Prettyprinter.Combinators.Basic
     Prettyprinter.MetaDoc
-    -- Prettyprinter.Utils
   hs-source-dirs:
     src
   build-depends:
@@ -69,22 +73,3 @@ library
     text,
     vector,
     unordered-containers
-
-test-suite prettyprinter-combinator-tests
-  import: ghc-options
-  type:
-    exitcode-stdio-1.0
-  main-is:
-    test/PrettyprinterCombinatorTests.hs
-  hs-source-dirs:
-    . test
-  build-depends:
-    base,
-    containers,
-    prettyprinter,
-    prettyprinter-combinators,
-    unordered-containers,
-    vector
-  ghc-options:
-    -rtsopts
-    -main-is PrettyprinterCombinatorTests

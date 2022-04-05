@@ -2,9 +2,8 @@
 -- |
 -- Module      :  Prettyprinter.Combinators.Basic
 -- Copyright   :  (c) Sergey Vinokurov 2018
--- License     :  BSD2 (see LICENSE)
+-- License     :  Apache-2.0 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
--- Created     :  25 March 2018
 ----------------------------------------------------------------------------
 
 {-# LANGUAGE OverloadedStrings   #-}
@@ -26,7 +25,7 @@ infixr 6 ##
 
 {-# INLINABLE ppListWithDelimSep #-}
 ppListWithDelimSep
-  :: forall f ann. (Functor f, Foldable f)
+  :: forall f ann. Foldable f
   => Doc ann
   -> Doc ann
   -> Doc ann

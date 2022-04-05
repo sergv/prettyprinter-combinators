@@ -2,11 +2,11 @@
 -- |
 -- Module      :  Prettyprinter.Data
 -- Copyright   :  (c) Sergey Vinokurov 2018
--- License     :  BSD2 (see LICENSE)
+-- License     :  Apache-2.0 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
--- Created     :  24 March 2018
 ----------------------------------------------------------------------------
 
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE PatternGuards       #-}
 {-# LANGUAGE Rank2Types          #-}
 {-# LANGUAGE ScopedTypeVariables #-}
@@ -17,9 +17,9 @@ module Prettyprinter.Data
   ) where
 
 import Data.Data
-import qualified Data.Generics
+import Data.Generics qualified
 import Prettyprinter
-import qualified Prettyprinter as PP
+import Prettyprinter qualified as PP
 import Prettyprinter.Combinators
 import Prettyprinter.MetaDoc
 
@@ -151,7 +151,7 @@ gpretty =
     `Data.Generics.extQ` metaDocUnit
     `Data.Generics.extQ` metaDocBool
     `Data.Generics.extQ` metaDocChar
-    -- Probabyl requires qualified constrtains...
+    -- Probably requires qualified constrtains...
     -- `Data.Generics.extQ`
     --   ((atomicMetaDoc . ppMapWith (mdPayload . gpretty) (mdPayload . gpretty)) ::
     --     forall k v. (Data k, Data v) => Map k v -> MetaDoc ann)

@@ -2,19 +2,19 @@
 -- |
 -- Module      :  Prettyprinter.Show
 -- Copyright   :  (c) Sergey Vinokurov 2018
--- License     :  BSD2 (see LICENSE)
+-- License     :  Apache-2.0 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
--- Created     :  25 March 2018
 ----------------------------------------------------------------------------
 
-{-# LANGUAGE LambdaCase        #-}
-{-# LANGUAGE OverloadedStrings #-}
+{-# LANGUAGE ImportQualifiedPost #-}
+{-# LANGUAGE LambdaCase          #-}
+{-# LANGUAGE OverloadedStrings   #-}
 
 module Prettyprinter.Show (ppShow) where
 
-import qualified Data.Text as T
+import Data.Text qualified as T
 import Prettyprinter
-import qualified Prettyprinter as PP
+import Prettyprinter qualified  as PP
 import Prettyprinter.Combinators
 import Prettyprinter.MetaDoc
 import Text.Show.Pretty (parseValue, Value(..))

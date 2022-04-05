@@ -2,11 +2,11 @@
 -- |
 -- Module      :  Prettyprinter.MetaDoc
 -- Copyright   :  (c) Sergey Vinokurov 2018
--- License     :  BSD2 (see LICENSE)
+-- License     :  Apache-2.0 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
--- Created     :  25 March 2018
 ----------------------------------------------------------------------------
 
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
 module Prettyprinter.MetaDoc
@@ -45,17 +45,17 @@ module Prettyprinter.MetaDoc
   , constructorAppMetaDoc
   ) where
 
-import qualified Data.ByteString.Char8 as C8
-import qualified Data.ByteString.Lazy.Char8 as CL8
-import qualified Data.ByteString.Short as ShortBS
+import Data.ByteString.Char8 qualified as C8
+import Data.ByteString.Lazy.Char8 qualified as CL8
+import Data.ByteString.Short qualified as ShortBS
 import Data.Int
 import Data.Semigroup as Semigroup
-import qualified Data.Text as T
-import qualified Data.Text.Lazy as TL
+import Data.Text qualified as T
+import Data.Text.Lazy qualified as TL
 import Data.Word
 import Numeric.Natural
 import Prettyprinter
-import qualified Prettyprinter as PP
+import Prettyprinter qualified as PP
 import Prettyprinter.Combinators.Basic
 
 data DocKind = Atomic | Composite

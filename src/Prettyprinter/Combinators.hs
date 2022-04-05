@@ -2,15 +2,13 @@
 -- |
 -- Module      :  Prettyprinter.Combinators
 -- Copyright   :  (c) Sergey Vinokurov 2018
--- License     :  BSD2 (see LICENSE)
+-- License     :  Apache-2.0 (see LICENSE)
 -- Maintainer  :  serg.foo@gmail.com
--- Created     :  21 March 2018
 ----------------------------------------------------------------------------
 
 {-# LANGUAGE CPP                 #-}
-{-# LANGUAGE DeriveFoldable      #-}
-{-# LANGUAGE DeriveFunctor       #-}
 {-# LANGUAGE DeriveTraversable   #-}
+{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 
@@ -71,27 +69,27 @@ module Prettyprinter.Combinators
   ) where
 
 import Data.Bimap (Bimap)
-import qualified Data.Bimap as BM
-import qualified Data.ByteString.Char8 as C8
-import qualified Data.ByteString.Lazy.Char8 as CL8
-import qualified Data.ByteString.Short as ShortBS
+import Data.Bimap qualified as BM
+import Data.ByteString.Char8 qualified as C8
+import Data.ByteString.Lazy.Char8 qualified as CL8
+import Data.ByteString.Short qualified as ShortBS
 import Data.DList (DList)
-import qualified Data.DList as DL
+import Data.DList qualified as DL
 import Data.Foldable
 import Data.HashMap.Strict (HashMap)
-import qualified Data.HashMap.Strict as HM
+import Data.HashMap.Strict qualified as HM
 import Data.HashSet (HashSet)
-import qualified Data.HashSet as HS
+import Data.HashSet qualified as HS
 import Data.IntMap (IntMap)
-import qualified Data.IntMap as IM
+import Data.IntMap qualified as IM
 import Data.IntSet (IntSet)
-import qualified Data.IntSet as IS
+import Data.IntSet qualified as IS
 import Data.List.NonEmpty (NonEmpty(..))
 import Data.Map.Strict (Map)
-import qualified Data.Map.Strict as M
+import Data.Map.Strict qualified as M
 import Data.Set (Set)
 import Data.Vector (Vector)
-import qualified Data.Vector as V
+import Data.Vector qualified as V
 import Debug.Trace
 import GHC.Stack (CallStack, SrcLoc(..), getCallStack, prettySrcLoc)
 
@@ -99,13 +97,13 @@ import GHC.Stack (CallStack, SrcLoc(..), getCallStack, prettySrcLoc)
 import Data.Semigroup ((<>))
 #endif
 
-import qualified Data.Text as T
-import qualified Data.Text.Lazy as TL
+import Data.Text qualified as T
+import Data.Text.Lazy qualified as TL
 import Prettyprinter (Pretty(..), Doc, (<+>))
-import qualified Prettyprinter as PP
+import Prettyprinter qualified as PP
 import Prettyprinter.Combinators.Basic
 import Prettyprinter.MetaDoc
-import qualified Prettyprinter.Render.Text as PP.Render
+import Prettyprinter.Render.Text qualified as PP.Render
 
 putDocLn :: Doc ann -> IO ()
 putDocLn x = do
@@ -244,13 +242,14 @@ ppDListWith :: (a -> Doc ann) -> DList a -> Doc ann
 ppDListWith f = ppListWith f . DL.toList
 
 ppListWithDelim
-  :: forall f ann. (Functor f, Foldable f)
+  :: forall f ann. Foldable f
   => Doc ann
   -> Doc ann
   -> f (Doc ann)
   -> Doc ann
 ppListWithDelim = ppListWithDelimSep separator
   where
+    separator :: Doc ann
     separator = ","
 
 ppAssocList :: (Pretty k, Pretty v) => [(k, v)] -> Doc ann
