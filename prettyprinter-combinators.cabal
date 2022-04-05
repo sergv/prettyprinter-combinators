@@ -3,7 +3,7 @@ cabal-version: 3.0
 name:
   prettyprinter-combinators
 version:
-  0.1
+  0.1.0.1
 synopsis:
   Some useful combinators for the prettyprinter package
 description:
@@ -34,7 +34,6 @@ homepage: https://github.com/sergv/prettyprinter-combinators
 source-repository head
     type: git
     location: https://github.com/sergv/prettyprinter-combinators.git
-
 
 common ghc-options
   default-language:
@@ -73,7 +72,7 @@ library
   hs-source-dirs:
     src
   build-depends:
-    base >= 4.7 && <5,
+    base >= 4.14 && <5,
     bimap,
     bytestring,
     containers,
