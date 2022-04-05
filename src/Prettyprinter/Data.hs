@@ -25,18 +25,17 @@ import Prettyprinter.MetaDoc
 
 -- $setup
 -- >>> :set -XDeriveDataTypeable
--- >>> import Data.List.NonEmpty (NonEmpty(..))
--- >>> import qualified Data.List.NonEmpty as NonEmpty
--- >>> import Data.HashMap.Strict (HashMap)
--- >>> import qualified Data.HashMap.Strict as HashMap
--- >>> import Data.Map.Strict (Map)
--- >>> import qualified Data.Map.Strict as Map
+-- >>> :set -XImportQualifiedPost
 -- >>> import Data.Data
+-- >>> import Data.List.NonEmpty (NonEmpty(..))
+-- >>> import Data.List.NonEmpty qualified as NonEmpty
+-- >>> import Data.Map.Strict (Map)
+-- >>> import Data.Map.Strict qualified as Map
 --
 -- >>> :{
 -- data Test =
 --     Foo Int [Int] Double (Maybe Test)
---   | Bar (String, Int, Int) (Map String Int) (HashMap String Int) (Maybe Test) (NonEmpty Int)
+--   | Bar (String, Int, Int) (Map String Int) (Map String Int) (Maybe Test) (NonEmpty Int)
 --   deriving (Data)
 -- :}
 
@@ -47,7 +46,7 @@ import Prettyprinter.MetaDoc
 --   Bar
 --     ("foo", 10, 20)
 --     (Map.fromList (zip ["foo", "bar", "baz"] [1..]))
---     (HashMap.fromList (zip ["foo", "bar", "baz", "quux", "fizz", "buzz", "frob", "wat"] [1..]))
+--     (Map.fromList (zip ["foo", "bar", "baz", "quux", "fizz", "buzz", "frob", "wat"] [1..]))
 --     (Just
 --       (Foo
 --          1
@@ -66,13 +65,13 @@ import Prettyprinter.MetaDoc
 -- Bar
 --   (foo, 10, 20)
 --   {bar -> 2, baz -> 3, foo -> 1}
---   { fizz -> 5
+--   { bar -> 2
 --   , baz -> 3
---   , quux -> 4
---   , foo -> 1
 --   , buzz -> 6
---   , bar -> 2
+--   , fizz -> 5
+--   , foo -> 1
 --   , frob -> 7
+--   , quux -> 4
 --   , wat -> 8
 --   }
 --   Just Foo

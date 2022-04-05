@@ -56,7 +56,10 @@ import GHC.Generics
 import GHC.Real (Ratio(..))
 import GHC.Stack (CallStack)
 import GHC.TypeLits
+
+#if !MIN_VERSION_GLASGOW_HASKELL(9, 2, 0, 0)
 import Numeric.Natural
+#endif
 
 import Prettyprinter
 import Prettyprinter.Combinators
@@ -67,22 +70,19 @@ import Language.Haskell.TH.Syntax qualified as TH
 
 -- $setup
 -- >>> :set -XDeriveGeneric
+-- >>> :set -XImportQualifiedPost
 -- >>> import Data.List.NonEmpty (NonEmpty(..))
--- >>> import qualified Data.List.NonEmpty as NonEmpty
--- >>> import Data.HashMap.Strict (HashMap)
--- >>> import qualified Data.HashMap.Strict as HashMap
--- >>> import Data.HashSet (HashSet)
--- >>> import qualified Data.HashSet as HashSet
+-- >>> import Data.List.NonEmpty qualified as NonEmpty
 -- >>> import Data.IntMap (IntMap)
--- >>> import qualified Data.IntMap as IntMap
+-- >>> import Data.IntMap qualified as IntMap
 -- >>> import Data.IntSet (IntSet)
--- >>> import qualified Data.IntSet as IntSet
+-- >>> import Data.IntSet qualified as IntSet
 -- >>> import Data.Map.Strict (Map)
--- >>> import qualified Data.Map.Strict as Map
+-- >>> import Data.Map.Strict qualified as Map
 -- >>> import Data.Set (Set)
--- >>> import qualified Data.Set as Set
+-- >>> import Data.Set qualified as Set
 -- >>> import Data.Vector (Vector)
--- >>> import qualified Data.Vector as Vector
+-- >>> import Data.Vector qualified as Vector
 -- >>> import GHC.Generics (Generic)
 --
 -- >>> :{
@@ -93,7 +93,7 @@ import Language.Haskell.TH.Syntax qualified as TH
 --   , testIntMap      :: IntMap String
 --   , testInt         :: Int
 --   , testComplexMap  :: Map (Maybe (Set Int)) (IntMap (Set String))
---   , testComplexMap2 :: Map (Maybe (HashSet Int)) (HashMap (NonEmpty Int) (Vector String))
+--   , testComplexMap2 :: Map (Maybe (Set Int)) (Map (NonEmpty Int) (Vector String))
 --   } deriving (Generic)
 -- :}
 
@@ -131,8 +131,8 @@ import Language.Haskell.TH.Syntax qualified as TH
 --       ]
 --   , testComplexMap2 =
 --       Map.singleton
---         (Just (HashSet.fromList [1..5]))
---         (HashMap.fromList
+--         (Just (Set.fromList [1..5]))
+--         (Map.fromList
 --            [ (NonEmpty.fromList [1, 2],  Vector.fromList ["foo", "bar", "baz"])
 --            , (NonEmpty.fromList [3],     Vector.fromList ["quux"])
 --            , (NonEmpty.fromList [4..10], Vector.fromList ["must", "put", "something", "in", "here"])
@@ -154,9 +154,9 @@ import Language.Haskell.TH.Syntax qualified as TH
 --       }
 --   , testComplexMap2 ->
 --       { Just ({1, 2, 3, 4, 5}) ->
---           { [4, 5, 6, 7, 8, 9, 10] -> [must, put, something, in, here]
+--           { [1, 2] -> [foo, bar, baz]
 --           , [3] -> [quux]
---           , [1, 2] -> [foo, bar, baz]
+--           , [4, 5, 6, 7, 8, 9, 10] -> [must, put, something, in, here]
 --           } }
 --   }
 ppGeneric :: (Generic a, GPretty (Rep a)) => a -> Doc ann
@@ -316,7 +316,11 @@ instance {-# OVERLAPS #-} PPGenericOverride TH.PkgName            where ppGeneri
 instance {-# OVERLAPS #-} PPGenericOverride TH.NameSpace          where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.ModName            where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Name               where ppGenericOverride = gpretty . from
+#if MIN_VERSION_template_haskell(2, 17, 0)
+instance {-# OVERLAPS #-} PPGenericOverride a => PPGenericOverride (TH.TyVarBndr a) where ppGenericOverride = gpretty . from
+#else
 instance {-# OVERLAPS #-} PPGenericOverride TH.TyVarBndr          where ppGenericOverride = gpretty . from
+#endif
 instance {-# OVERLAPS #-} PPGenericOverride TH.TyLit              where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Type               where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.SourceUnpackedness where ppGenericOverride = gpretty . from
@@ -361,6 +365,9 @@ instance {-# OVERLAPS #-} PPGenericOverride TH.PatSynDir          where ppGeneri
 #endif
 instance {-# OVERLAPS #-} PPGenericOverride TH.Dec                where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Info               where ppGenericOverride = gpretty . from
+#if MIN_VERSION_template_haskell(2, 17, 0)
+instance {-# OVERLAPS #-} PPGenericOverride TH.Specificity        where ppGenericOverride = gpretty . from
+#endif
 
 instance {-# OVERLAPS #-}
   ( PPGenericOverride a
