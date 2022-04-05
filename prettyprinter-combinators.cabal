@@ -12,6 +12,9 @@ description:
   Notable utilites include automatic deriving of Pretty instance via
   Generic, Data, or Show instance.
 
+category:
+  User Interfaces, Text
+
 license:
   Apache-2.0
 license-file:
@@ -70,7 +73,7 @@ library
   hs-source-dirs:
     src
   build-depends:
-    base >= 4.7,
+    base >= 4.7 && <5,
     bimap,
     bytestring,
     containers,
