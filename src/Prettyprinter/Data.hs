@@ -14,6 +14,7 @@
 module Prettyprinter.Data
   ( ppData
   , ppDataSimple
+  , Data
   ) where
 
 import Data.Data
