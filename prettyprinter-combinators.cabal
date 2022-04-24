@@ -65,10 +65,10 @@ library
     Prettyprinter.Combinators
     Prettyprinter.Data
     Prettyprinter.Generics
+    Prettyprinter.MetaDoc
     Prettyprinter.Show
   other-modules:
     Prettyprinter.Combinators.Basic
-    Prettyprinter.MetaDoc
   hs-source-dirs:
     src
   build-depends:
