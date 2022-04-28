@@ -131,7 +131,7 @@ ppDataSimple = pretty . Data.Generics.gshow
 
 gpretty :: forall a ann. Data a => a -> MetaDoc ann
 gpretty =
-  render
+  go
     `Data.Generics.extQ` stringMetaDoc
     `Data.Generics.extQ` strictTextMetaDoc
     `Data.Generics.extQ` lazyTextMetaDoc
@@ -156,8 +156,8 @@ gpretty =
     --   ((atomicMetaDoc . ppMapWith (mdPayload . gpretty) (mdPayload . gpretty)) ::
     --     forall k v. (Data k, Data v) => Map k v -> MetaDoc ann)
   where
-    render :: Data b => b -> MetaDoc ann
-    render t
+    go :: Data b => b -> MetaDoc ann
+    go t
       | constructorName == "fromList"
       , Just mapItems  <- gmapQi 0 (listElements (isPair gpretty)) t
       , Just mapItems' <- sequence mapItems
