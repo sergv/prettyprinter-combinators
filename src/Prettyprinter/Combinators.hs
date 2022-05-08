@@ -16,8 +16,9 @@ module Prettyprinter.Combinators
   ( Pretty(..)
   , PP.Doc
   , putDocLn
-  , displayDoc
-  , displayDocString
+  , render
+  , renderLazy
+  , renderString
   , docFromString
   , docFromText
   , PP.viaShow
@@ -108,17 +109,20 @@ putDocLn x = do
   PP.Render.putDoc x
   putStrLn ""
 
-displayDoc :: Doc ann -> TL.Text
-displayDoc = PP.Render.renderLazy . PP.layoutPretty PP.defaultLayoutOptions
+render :: Doc ann -> T.Text
+render = TL.toStrict . renderLazy
 
-displayDocString :: Doc ann -> String
-displayDocString = TL.unpack . displayDoc
+renderLazy :: Doc ann -> TL.Text
+renderLazy = PP.Render.renderLazy . PP.layoutPretty PP.defaultLayoutOptions
+
+renderString :: Doc ann -> String
+renderString = TL.unpack . renderLazy
 
 docFromString :: String -> Doc ann
 docFromString = pretty . TL.pack
 
 docFromText :: T.Text -> Doc ann
-docFromText = pretty . TL.fromStrict
+docFromText = pretty
 
 
 infixr 0 :->
