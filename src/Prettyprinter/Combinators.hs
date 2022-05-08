@@ -63,7 +63,6 @@ module Prettyprinter.Combinators
   , ppByteString
   , ppByteStringLazy
   , ppShortByteString
-  , ppTrace
   , ppCallStack
   , ppCallStackGHC
   ) where
@@ -90,7 +89,6 @@ import Data.Map.Strict qualified as M
 import Data.Set (Set)
 import Data.Vector (Vector)
 import Data.Vector qualified as V
-import Debug.Trace
 import GHC.Stack (CallStack, SrcLoc(..), getCallStack, prettySrcLoc)
 
 #if !MIN_VERSION_base(4, 11, 0)
@@ -277,9 +275,6 @@ ppByteStringLazy = mdPayload . lazyByteStringMetaDoc
 
 ppShortByteString :: ShortBS.ShortByteString -> Doc ann
 ppShortByteString = mdPayload . shortByteStringMetaDoc
-
-ppTrace :: Doc ann -> a -> a
-ppTrace msg = trace (displayDocString msg)
 
 ppCallStack :: CallStack -> Doc ann
 ppCallStack =
