@@ -88,8 +88,7 @@ import Data.List.NonEmpty (NonEmpty(..))
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as M
 import Data.Set (Set)
-import Data.Vector (Vector)
-import Data.Vector qualified as V
+import Data.Vector.Generic qualified as G
 import GHC.Stack (CallStack, SrcLoc(..), getCallStack, prettySrcLoc)
 
 #if !MIN_VERSION_base(4, 11, 0)
@@ -231,11 +230,11 @@ ppHashMap = ppHashMapWith pretty pretty
 ppHashMapWith :: (k -> Doc ann) -> (v -> Doc ann) -> HashMap k v -> Doc ann
 ppHashMapWith f g = ppAssocListWith f g . HM.toList
 
-ppVector :: Pretty a => Vector a -> Doc ann
+ppVector :: (G.Vector v a, Pretty a) => v a -> Doc ann
 ppVector = ppVectorWith pretty
 
-ppVectorWith :: (a -> Doc ann) -> Vector a -> Doc ann
-ppVectorWith f = ppListWith f . V.toList
+ppVectorWith :: G.Vector v a => (a -> Doc ann) -> v a -> Doc ann
+ppVectorWith f = ppListWith f . G.toList
 
 ppDList :: Pretty a => DList a -> Doc ann
 ppDList = ppDListWith pretty
