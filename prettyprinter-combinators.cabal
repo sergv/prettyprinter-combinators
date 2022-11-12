@@ -30,6 +30,9 @@ tested-with:
 build-type:
   Simple
 
+extra-source-files:
+  ChangeLog.org
+
 homepage: https://github.com/sergv/prettyprinter-combinators
 source-repository head
     type: git
