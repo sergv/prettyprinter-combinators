@@ -1,10 +1,8 @@
-#+STARTUP: content
+This is a set of utilities for the Haskell `prettyrinter` package.
+Most notable is automatic deriving of `Pretty` instance from the
+`Generic` instance, e.g.
 
-This is a set of utilities for the Haskell ~prettyrinter~ package.
-Most notable is automatic deriving of ~Pretty~ instance from the
-~Generic~ instance, e.g.
-
-#+BEGIN_EXAMPLE
+```haskell
 {-# LANGUAGE DeriveGeneric #-}
 
 import Prettyprinter.Generics
@@ -17,11 +15,11 @@ instance (Pretty a, Pretty b) => Pretty (Foo a b) where
 
 printed :: Doc ann
 printed = pretty $ Baz (Bar 10 :: Foo () ()) [1..22]
-#+END_EXAMPLE
+```
 
-which would put following into ~printed~:
+which would put following into `printed`:
 
-#+BEGIN_EXAMPLE
+```
 Baz
   Bar 10
   [ 1
@@ -46,4 +44,4 @@ Baz
   , 20
   , 21
   , 22 ]
-#+END_EXAMPLE
+```

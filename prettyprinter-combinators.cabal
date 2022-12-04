@@ -31,7 +31,8 @@ build-type:
   Simple
 
 extra-source-files:
-  ChangeLog.org
+  Changelog.md
+  Readme.md
 
 homepage: https://github.com/sergv/prettyprinter-combinators
 source-repository head
