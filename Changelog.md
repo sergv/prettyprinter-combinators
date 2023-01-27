@@ -1,2 +1,3 @@
 # Unreleased
-- ~ppVector~ and ~ppVectorWith~ now accept generic vectors
+- `ppVector` and `ppVectorWith` now accept generic vectors
+- Add lower bound `pretty-show >= 1.6`
