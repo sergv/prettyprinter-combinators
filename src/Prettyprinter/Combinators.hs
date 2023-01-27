@@ -8,7 +8,6 @@
 
 {-# LANGUAGE CPP                 #-}
 {-# LANGUAGE DeriveTraversable   #-}
-{-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE OverloadedStrings   #-}
 {-# LANGUAGE ScopedTypeVariables #-}
 

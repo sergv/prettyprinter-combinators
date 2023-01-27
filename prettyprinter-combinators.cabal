@@ -39,12 +39,15 @@ extra-source-files:
 
 homepage: https://github.com/sergv/prettyprinter-combinators
 source-repository head
-    type: git
-    location: https://github.com/sergv/prettyprinter-combinators.git
+  type: git
+  location: https://github.com/sergv/prettyprinter-combinators.git
 
 common ghc-options
   default-language:
     Haskell2010
+
+  default-extensions:
+    ImportQualifiedPost
 
   ghc-options:
     -Weverything
