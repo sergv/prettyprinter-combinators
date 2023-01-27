@@ -25,7 +25,10 @@ maintainer:
   Sergey Vinokurov <serg.foo@gmail.com>
 
 tested-with:
-  GHC == 8.10.7, GHC == 9.0.2, GHC == 9.2.2
+  , GHC == 8.10.7
+  , GHC == 9.0.2
+  , GHC == 9.2.5
+  , GHC == 9.4.4
 
 build-type:
   Simple
@@ -76,15 +79,15 @@ library
   hs-source-dirs:
     src
   build-depends:
-    base >= 4.14 && <5,
-    bimap,
-    bytestring,
-    containers,
-    dlist,
-    prettyprinter >= 1.7,
-    pretty-show,
-    syb,
-    template-haskell >= 2.10,
-    text,
-    vector,
-    unordered-containers
+    , base >= 4.14 && <5
+    , bimap
+    , bytestring
+    , containers
+    , dlist
+    , pretty-show >= 1.6
+    , prettyprinter >= 1.7
+    , syb
+    , template-haskell >= 2.10
+    , text
+    , unordered-containers
+    , vector

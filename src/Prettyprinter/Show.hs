@@ -6,6 +6,7 @@
 -- Maintainer  :  serg.foo@gmail.com
 ----------------------------------------------------------------------------
 
+{-# LANGUAGE CPP                 #-}
 {-# LANGUAGE ImportQualifiedPost #-}
 {-# LANGUAGE LambdaCase          #-}
 {-# LANGUAGE OverloadedStrings   #-}
@@ -50,6 +51,8 @@ ppValue = \case
   Float x         -> stringMetaDoc x
   Char x          -> stringMetaDoc x
   String x        -> stringMetaDoc x
+#if MIN_VERSION_pretty_show (1, 10, 0)
   Date x          -> stringMetaDoc x
   Time x          -> stringMetaDoc x
   Quote x         -> stringMetaDoc x
+#endif
