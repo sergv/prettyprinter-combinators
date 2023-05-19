@@ -6,10 +6,8 @@
 -- Maintainer  :  serg.foo@gmail.com
 ----------------------------------------------------------------------------
 
-{-# LANGUAGE CPP                 #-}
-{-# LANGUAGE DeriveTraversable   #-}
-{-# LANGUAGE OverloadedStrings   #-}
-{-# LANGUAGE ScopedTypeVariables #-}
+{-# LANGUAGE CPP               #-}
+{-# LANGUAGE OverloadedStrings #-}
 
 module Prettyprinter.Combinators
   ( Pretty(..)

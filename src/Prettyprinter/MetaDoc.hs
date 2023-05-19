@@ -6,8 +6,6 @@
 -- Maintainer  :  serg.foo@gmail.com
 ----------------------------------------------------------------------------
 
-{-# LANGUAGE ScopedTypeVariables #-}
-
 module Prettyprinter.MetaDoc
   ( DocKind(..)
   , MetaDoc

@@ -6,16 +6,11 @@
 -- Maintainer  :  serg.foo@gmail.com
 ----------------------------------------------------------------------------
 
-{-# LANGUAGE CPP                  #-}
 {-# LANGUAGE DataKinds            #-}
-{-# LANGUAGE FlexibleContexts     #-}
-{-# LANGUAGE FlexibleInstances    #-}
 {-# LANGUAGE LambdaCase           #-}
 {-# LANGUAGE OverloadedStrings    #-}
-{-# LANGUAGE ScopedTypeVariables  #-}
 {-# LANGUAGE TypeApplications     #-}
 {-# LANGUAGE TypeFamilies         #-}
-{-# LANGUAGE TypeOperators        #-}
 {-# LANGUAGE UndecidableInstances #-}
 
 module Prettyprinter.Generics
@@ -56,10 +51,6 @@ import GHC.Generics
 import GHC.Real (Ratio(..))
 import GHC.Stack (CallStack)
 import GHC.TypeLits
-
-#if !MIN_VERSION_GLASGOW_HASKELL(9, 2, 0, 0)
-import Numeric.Natural
-#endif
 
 import Prettyprinter
 import Prettyprinter.Combinators
@@ -335,11 +326,7 @@ instance {-# OVERLAPS #-} PPGenericOverride TH.PkgName            where ppGeneri
 instance {-# OVERLAPS #-} PPGenericOverride TH.NameSpace          where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.ModName            where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Name               where ppGenericOverride = gpretty . from
-#if MIN_VERSION_template_haskell(2, 17, 0)
 instance {-# OVERLAPS #-} PPGenericOverride a => PPGenericOverride (TH.TyVarBndr a) where ppGenericOverride = gpretty . from
-#else
-instance {-# OVERLAPS #-} PPGenericOverride TH.TyVarBndr          where ppGenericOverride = gpretty . from
-#endif
 instance {-# OVERLAPS #-} PPGenericOverride TH.TyLit              where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Type               where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.SourceUnpackedness where ppGenericOverride = gpretty . from
@@ -356,10 +343,8 @@ instance {-# OVERLAPS #-} PPGenericOverride TH.Range              where ppGeneri
 instance {-# OVERLAPS #-} PPGenericOverride TH.Exp                where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Pat                where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Clause             where ppGenericOverride = gpretty . from
-#if MIN_VERSION_template_haskell(2, 12, 0)
 instance {-# OVERLAPS #-} PPGenericOverride TH.DerivStrategy      where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.DerivClause        where ppGenericOverride = gpretty . from
-#endif
 instance {-# OVERLAPS #-} PPGenericOverride TH.FunDep             where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Overlap            where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Callconv           where ppGenericOverride = gpretty . from
@@ -378,15 +363,11 @@ instance {-# OVERLAPS #-} PPGenericOverride TH.FamilyResultSig    where ppGeneri
 instance {-# OVERLAPS #-} PPGenericOverride TH.InjectivityAnn     where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.TypeFamilyHead     where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Role               where ppGenericOverride = gpretty . from
-#if MIN_VERSION_template_haskell(2, 12, 0)
 instance {-# OVERLAPS #-} PPGenericOverride TH.PatSynArgs         where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.PatSynDir          where ppGenericOverride = gpretty . from
-#endif
 instance {-# OVERLAPS #-} PPGenericOverride TH.Dec                where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Info               where ppGenericOverride = gpretty . from
-#if MIN_VERSION_template_haskell(2, 17, 0)
 instance {-# OVERLAPS #-} PPGenericOverride TH.Specificity        where ppGenericOverride = gpretty . from
-#endif
 
 instance {-# OVERLAPS #-}
   ( PPGenericOverride a
@@ -407,35 +388,6 @@ instance {-# OVERLAPS #-}
     , PPGenericOverrideToPretty b
     , PPGenericOverrideToPretty c
     )
-
--- instance {-# OVERLAPS #-}
---   ( PPGenericOverride a
---   , PPGenericOverride b
---   , PPGenericOverride c
---   , PPGenericOverride d
---   ) => PPGenericOverride (a, b, c, d) where
---   ppGenericOverride (a, b, c, d) = atomicMetaDoc $ pretty
---     ( PPGenericOverrideToPretty a
---     , PPGenericOverrideToPretty b
---     , PPGenericOverrideToPretty c
---     , PPGenericOverrideToPretty d
---     )
---
--- instance {-# OVERLAPS #-}
---   ( PPGenericOverride a
---   , PPGenericOverride b
---   , PPGenericOverride c
---   , PPGenericOverride d
---   , PPGenericOverride e
---   ) => PPGenericOverride (a, b, c, d, e) where
---   ppGenericOverride (a, b, c, d, e) = atomicMetaDoc $ pretty
---     ( PPGenericOverrideToPretty a
---     , PPGenericOverrideToPretty b
---     , PPGenericOverrideToPretty c
---     , PPGenericOverrideToPretty d
---     , PPGenericOverrideToPretty e
---     )
-
 
 instance {-# OVERLAPS #-} PPGenericOverride v => PPGenericOverride (Maybe v) where
   ppGenericOverride =
