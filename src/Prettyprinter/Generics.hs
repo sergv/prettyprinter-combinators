@@ -20,6 +20,7 @@
 
 module Prettyprinter.Generics
   ( ppGeneric
+  , PPGeneric(..)
   , PPGenericOverride(..)
   , Pretty(..)
   , Generic
@@ -69,6 +70,7 @@ import Language.Haskell.TH.Syntax qualified as TH
 
 -- $setup
 -- >>> :set -XDeriveGeneric
+-- >>> :set -XDerivingVia
 -- >>> :set -XImportQualifiedPost
 -- >>> import Data.List.NonEmpty (NonEmpty(..))
 -- >>> import Data.List.NonEmpty qualified as NonEmpty
@@ -96,7 +98,25 @@ import Language.Haskell.TH.Syntax qualified as TH
 --   } deriving (Generic)
 -- :}
 
--- | Prettyprint using 'Generic.Data' instance.
+-- | Helper to use 'GHC.Generics.Generic'-based prettyprinting with DerivingVia.
+--
+-- >>> :{
+-- data TestWithDeriving a b = TestWithDeriving
+--   { testSet         :: Maybe (Set a)
+--   , testB           :: b
+--   , testIntMap      :: IntMap String
+--   , testComplexMap  :: Map (Maybe (Set Int)) (IntMap (Set String))
+--   }
+--   deriving (Generic)
+--   deriving Pretty via PPGeneric (TestWithDeriving a b)
+-- :}
+--
+newtype PPGeneric a = PPGeneric { unPPGeneric :: a }
+
+instance (Generic a, GPretty (Rep a)) => Pretty (PPGeneric a) where
+  pretty = ppGeneric . unPPGeneric
+
+-- | Prettyprint using 'GHC.Generics.Generic' instance.
 --
 -- >>> :{
 -- test = Test

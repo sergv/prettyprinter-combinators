@@ -3,7 +3,7 @@ cabal-version: 3.0
 name:
   prettyprinter-combinators
 version:
-  0.1.1.1
+  0.1.2
 synopsis:
   Some useful combinators for the prettyprinter package
 description:
@@ -27,8 +27,9 @@ maintainer:
 tested-with:
   , GHC == 8.10.7
   , GHC == 9.0.2
-  , GHC == 9.2.5
-  , GHC == 9.4.4
+  , GHC == 9.2.7
+  , GHC == 9.4.5
+  , GHC == 9.6.1
 
 build-type:
   Simple
