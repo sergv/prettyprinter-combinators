@@ -1,3 +1,5 @@
+[![build](https://github.com/sergv/prettyprinter-combinators/actions/workflows/haskell-ci.yaml/badge.svg)](https://github.com/sergv/prettyprinter-combinators/actions/workflows/haskell-ci.yaml)
+
 This is a set of utilities for the Haskell `prettyrinter` package.
 Most notable is automatic deriving of `Pretty` instance from the
 `Generic` instance, e.g.
