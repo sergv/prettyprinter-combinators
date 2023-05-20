@@ -10,7 +10,10 @@
 {-# LANGUAGE LambdaCase        #-}
 {-# LANGUAGE OverloadedStrings #-}
 
-module Prettyprinter.Show (ppShow) where
+module Prettyprinter.Show
+  ( ppShow
+  , PPShow(..)
+  ) where
 
 import Data.Text qualified as T
 import Prettyprinter
@@ -18,6 +21,30 @@ import Prettyprinter qualified  as PP
 import Prettyprinter.Combinators
 import Prettyprinter.MetaDoc
 import Text.Show.Pretty (parseValue, Value(..))
+
+-- $setup
+-- >>> :set -XDerivingVia
+-- >>> import Data.IntMap (IntMap)
+-- >>> import Data.Map.Strict (Map)
+-- >>> import Data.Set (Set)
+
+-- | Helper to use 'Show'-based prettyprinting with DerivingVia.
+--
+-- >>> :{
+-- data TestWithDeriving a b = TestWithDeriving
+--   { testSet         :: Maybe (Set a)
+--   , testB           :: b
+--   , testIntMap      :: IntMap String
+--   , testComplexMap  :: Map (Maybe (Set Int)) (IntMap (Set String))
+--   }
+--   deriving (Show)
+--   deriving Pretty via PPShow (TestWithDeriving a b)
+-- :}
+--
+newtype PPShow a = PPShow { unPPShow :: a }
+
+instance Show a => Pretty (PPShow a) where
+  pretty = ppShow . unPPShow
 
 ppShow :: Show a => a -> Doc ann
 ppShow x =
