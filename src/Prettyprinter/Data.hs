@@ -125,6 +125,7 @@ import Prettyprinter.MetaDoc
 ppData :: Data a => a -> Doc ann
 ppData = mdPayload . gpretty
 
+-- | Prettyprint using 'Data.Generics.gshow'.
 ppDataSimple :: Data a => a -> Doc ann
 ppDataSimple = pretty . Data.Generics.gshow
 
