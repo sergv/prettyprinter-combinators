@@ -320,13 +320,14 @@ instance {-# OVERLAPS #-} PPGenericOverride ShortBS.ShortByteString where
 
 instance {-# OVERLAPS #-} PPGenericOverride (ForeignPtr a)        where ppGenericOverride = atomicMetaDoc . pretty . show
 
+instance {-# OVERLAPS #-} PPGenericOverride a => PPGenericOverride (TH.TyVarBndr a) where ppGenericOverride = gpretty . from
+
 instance {-# OVERLAPS #-} PPGenericOverride TH.OccName            where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.NameFlavour        where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.PkgName            where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.NameSpace          where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.ModName            where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Name               where ppGenericOverride = gpretty . from
-instance {-# OVERLAPS #-} PPGenericOverride a => PPGenericOverride (TH.TyVarBndr a) where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.TyLit              where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Type               where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.SourceUnpackedness where ppGenericOverride = gpretty . from
