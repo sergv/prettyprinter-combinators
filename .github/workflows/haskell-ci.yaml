@@ -16,17 +16,17 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         ghc:
-          - "9.2.7"
-          - "9.4.5"
-          - "9.6.1"
+          - "9.2"
+          - "9.4"
+          - "9.6"
         include:
           - os: macOS-latest
-            ghc: "9.6.1"
+            ghc: "9.6"
           - os: windows-latest
-            ghc: "9.6.1"
+            ghc: "9.6"
     steps:
     - uses: actions/checkout@v3
-    - uses: haskell/actions/setup@v2.3.7
+    - uses: haskell/actions/setup@v2
       id: setup-haskell-cabal
       with:
         ghc-version: ${{ matrix.ghc }}
@@ -51,25 +51,26 @@ jobs:
 
     - name: Unpack
       run: |
-        cabal sdist --ignore-project --output-directory .
+        cabal sdist --ignore-project --output-directory ..
+        cd ..
         cabal get prettyprinter-combinators-*.tar.gz
 
     - name: Build
       run: |
-        cd prettyprinter-combinators-*/
+        cd ../prettyprinter-combinators-*/
         cabal build all --enable-tests --enable-benchmarks
 
     - name: Doctest
       run: |
-        cd prettyprinter-combinators-*/
+        cd ../prettyprinter-combinators-*/
         cabal repl --with-ghc "${{github.workspace}}/doctest-bin/doctest" --repl-options=-Wno-missing-export-lists 'lib:prettyprinter-combinators'
 
     - name: Haddock
       run: |
-        cd prettyprinter-combinators-*/
+        cd ../prettyprinter-combinators-*/
         cabal haddock all
 
     - name: Cabal check
       run: |
-        cd prettyprinter-combinators-*/
+        cd ../prettyprinter-combinators-*/
         cabal check
