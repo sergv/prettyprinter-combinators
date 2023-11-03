@@ -6,6 +6,7 @@
 -- Maintainer  :  serg.foo@gmail.com
 ----------------------------------------------------------------------------
 
+{-# LANGUAGE CPP                  #-}
 {-# LANGUAGE DataKinds            #-}
 {-# LANGUAGE LambdaCase           #-}
 {-# LANGUAGE OverloadedStrings    #-}
@@ -369,6 +370,10 @@ instance {-# OVERLAPS #-} PPGenericOverride TH.PatSynDir          where ppGeneri
 instance {-# OVERLAPS #-} PPGenericOverride TH.Dec                where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Info               where ppGenericOverride = gpretty . from
 instance {-# OVERLAPS #-} PPGenericOverride TH.Specificity        where ppGenericOverride = gpretty . from
+
+#if MIN_VERSION_template_haskell(2, 21, 0)
+instance {-# OVERLAPS #-} PPGenericOverride TH.BndrVis            where ppGenericOverride = gpretty . from
+#endif
 
 instance {-# OVERLAPS #-}
   ( PPGenericOverride a

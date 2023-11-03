@@ -1,5 +1,6 @@
 # 0.1.2
 
+- Fix build with GHC 9.8
 - Add `PPGeneric` newtype to apply `ppGeneric` through `DerivingVia`
 - Add `PPShow` newtype to apply `ppShow` through `DerivingVia`
 
