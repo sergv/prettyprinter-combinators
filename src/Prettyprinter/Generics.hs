@@ -39,7 +39,6 @@ import Data.Kind
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
 import Data.Proxy
-import Data.Semigroup qualified as Semigroup
 import Data.Set (Set)
 import Data.Text (Text)
 import Data.Text qualified as T
@@ -282,7 +281,7 @@ instance {-# OVERLAPS #-} PPGenericOverride Char where
 instance {-# OVERLAPS #-} PPGenericOverride a => PPGenericOverride (Ratio a) where
   {-# INLINABLE ppGenericOverride #-}
   ppGenericOverride (x :% y) =
-    ppGenericOverride x Semigroup.<> atomicMetaDoc "/" <> ppGenericOverride y
+    ppGenericOverride x <> atomicMetaDoc "/" <> ppGenericOverride y
 
 instance {-# OVERLAPS #-} PPGenericOverride CallStack where
   {-# INLINE ppGenericOverride #-}

@@ -46,7 +46,6 @@ import Data.ByteString.Char8 qualified as C8
 import Data.ByteString.Lazy.Char8 qualified as CL8
 import Data.ByteString.Short qualified as ShortBS
 import Data.Int
-import Data.Semigroup as Semigroup
 import Data.Text qualified as T
 import Data.Text.Lazy qualified as TL
 import Data.Word
@@ -62,8 +61,7 @@ instance Semigroup DocKind where
   (<>) = max
 
 instance Monoid DocKind where
-  mempty  = minBound
-  mappend = (Semigroup.<>)
+  mempty = minBound
 
 data MetaDoc ann = MetaDoc
   { mdPayload :: Doc ann

@@ -6,7 +6,6 @@
 -- Maintainer  :  serg.foo@gmail.com
 ----------------------------------------------------------------------------
 
-{-# LANGUAGE CPP               #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Prettyprinter.Combinators
@@ -85,15 +84,10 @@ import Data.List.NonEmpty (NonEmpty(..))
 import Data.Map.Strict (Map)
 import Data.Map.Strict qualified as M
 import Data.Set (Set)
-import Data.Vector.Generic qualified as G
-import GHC.Stack (CallStack, SrcLoc(..), getCallStack, prettySrcLoc)
-
-#if !MIN_VERSION_base(4, 11, 0)
-import Data.Semigroup ((<>))
-#endif
-
 import Data.Text qualified as T
 import Data.Text.Lazy qualified as TL
+import Data.Vector.Generic qualified as G
+import GHC.Stack (CallStack, SrcLoc(..), getCallStack, prettySrcLoc)
 import Prettyprinter (Pretty(..), Doc, (<+>))
 import Prettyprinter qualified as PP
 import Prettyprinter.Combinators.Basic
