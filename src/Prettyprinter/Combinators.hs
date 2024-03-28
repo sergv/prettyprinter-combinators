@@ -52,6 +52,10 @@ module Prettyprinter.Combinators
   , ppIntSetWith
   , ppIntMap
   , ppIntMapWith
+  , ppEnumSet
+  , ppEnumSetWith
+  , ppEnumMap
+  , ppEnumMapWith
   , ppHashSet
   , ppHashSetWith
   , ppHashMap
@@ -78,6 +82,10 @@ import Data.ByteString.Lazy.Char8 qualified as CL8
 import Data.ByteString.Short qualified as ShortBS
 import Data.DList (DList)
 import Data.DList qualified as DL
+import Data.EnumMap (EnumMap)
+import Data.EnumMap qualified as EM
+import Data.EnumSet (EnumSet)
+import Data.EnumSet qualified as ES
 import Data.Foldable
 import Data.HashMap.Strict (HashMap)
 import Data.HashMap.Strict qualified as HM
@@ -225,6 +233,18 @@ ppIntMap = ppIntMapWith pretty pretty
 
 ppIntMapWith :: (Int -> Doc ann) -> (a -> Doc ann) -> IntMap a -> Doc ann
 ppIntMapWith f g = ppAssocListWith f g . IM.toList
+
+ppEnumSet :: (Enum a, Pretty a) => EnumSet a -> Doc ann
+ppEnumSet = ppEnumSetWith pretty
+
+ppEnumSetWith :: Enum a => (a -> Doc ann) -> EnumSet a -> Doc ann
+ppEnumSetWith f = ppListWithDelim PP.lbrace PP.rbrace . map f . ES.toList
+
+ppEnumMap :: (Enum k, Pretty k, Pretty v) => EnumMap k v -> Doc ann
+ppEnumMap = ppEnumMapWith pretty pretty
+
+ppEnumMapWith :: Enum k => (k -> Doc ann) -> (v -> Doc ann) -> EnumMap k v -> Doc ann
+ppEnumMapWith f g = ppAssocListWith f g . EM.toList
 
 ppHashSet :: Pretty a => HashSet a -> Doc ann
 ppHashSet = ppHashSetWith pretty

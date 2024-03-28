@@ -28,14 +28,16 @@ import Data.ByteString.Char8 qualified as C8
 import Data.ByteString.Lazy.Char8 qualified as CL8
 import Data.ByteString.Short qualified as ShortBS
 import Data.DList (DList)
-import Data.DList qualified as DList
+import Data.DList qualified as DL
+import Data.EnumMap (EnumMap)
+import Data.EnumSet (EnumSet)
 import Data.Foldable
 import Data.Functor.Compose
 import Data.HashMap.Strict (HashMap)
 import Data.HashSet (HashSet)
 import Data.Int
 import Data.IntMap (IntMap)
-import Data.IntSet qualified as IntSet
+import Data.IntSet (IntSet)
 import Data.Kind
 import Data.List.NonEmpty (NonEmpty)
 import Data.Map (Map)
@@ -428,13 +430,21 @@ instance {-# OVERLAPS #-} (PPGenericOverride k, PPGenericOverride v) => PPGeneri
   ppGenericOverride =
     atomicMetaDoc . ppBimapWith ppGenericOverrideDoc ppGenericOverrideDoc
 
-instance {-# OVERLAPS #-} PPGenericOverride IntSet.IntSet where
+instance {-# OVERLAPS #-} PPGenericOverride IntSet where
   ppGenericOverride =
     atomicMetaDoc . ppIntSetWith ppGenericOverrideDoc
 
 instance {-# OVERLAPS #-} PPGenericOverride v => PPGenericOverride (IntMap v) where
   ppGenericOverride =
     atomicMetaDoc . ppIntMapWith ppGenericOverrideDoc ppGenericOverrideDoc
+
+instance {-# OVERLAPS #-} (Enum a, PPGenericOverride a) => PPGenericOverride (EnumSet a) where
+  ppGenericOverride =
+    atomicMetaDoc . ppEnumSetWith ppGenericOverrideDoc
+
+instance {-# OVERLAPS #-} (Enum k, PPGenericOverride k, PPGenericOverride v) => PPGenericOverride (EnumMap k v ) where
+  ppGenericOverride =
+    atomicMetaDoc . ppEnumMapWith ppGenericOverrideDoc ppGenericOverrideDoc
 
 instance {-# OVERLAPS #-} PPGenericOverride v => PPGenericOverride (HashSet v) where
   ppGenericOverride =
@@ -480,7 +490,7 @@ instance GFields U1 where
 
 instance GPretty x => GFields (M1 S ('MetaSel a b c d) x) where
   {-# INLINABLE gfields #-}
-  gfields = DList.singleton . gpretty . unM1
+  gfields = DL.singleton . gpretty . unM1
 
 instance (GFields f, GFields g) => GFields (f :*: g) where
   {-# INLINABLE gfields #-}
@@ -500,7 +510,7 @@ class GCollectRecord a where
 instance (KnownSymbol name, GPretty a) => GCollectRecord (M1 S ('MetaSel ('Just name) su ss ds) a) where
   {-# INLINABLE gcollectRecord #-}
   gcollectRecord (M1 x) =
-    DList.singleton (T.pack (symbolVal (Proxy @name)) :-> gpretty x)
+    DL.singleton (T.pack (symbolVal (Proxy @name)) :-> gpretty x)
 
 instance (GCollectRecord f, GCollectRecord g) => GCollectRecord (f :*: g) where
   {-# INLINABLE gcollectRecord #-}

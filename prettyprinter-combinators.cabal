@@ -89,6 +89,7 @@ library
     , bytestring
     , containers
     , dlist
+    , enummapset
     , pretty-show >= 1.6
     , prettyprinter >= 1.7
     , syb
