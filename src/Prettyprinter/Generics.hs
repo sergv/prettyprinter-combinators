@@ -18,6 +18,7 @@ module Prettyprinter.Generics
   ( ppGeneric
   , PPGeneric(..)
   , PPGenericOverride(..)
+  -- * Reexports
   , Pretty(..)
   , Generic
   ) where

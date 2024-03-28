@@ -13,6 +13,8 @@
 module Prettyprinter.Show
   ( ppShow
   , PPShow(..)
+  -- * Reexports
+  , Pretty(..)
   ) where
 
 import Data.Text qualified as T
