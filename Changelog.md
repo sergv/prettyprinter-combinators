@@ -1,3 +1,7 @@
+# Dev
+
+- Add functions for rendering with specified layout options
+
 # 0.1.2
 
 - Fix build with GHC 9.8
