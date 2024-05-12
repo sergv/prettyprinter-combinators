@@ -3,7 +3,7 @@ cabal-version: 3.0
 name:
   prettyprinter-combinators
 version:
-  0.1.2
+  0.1.3
 synopsis:
   Some useful combinators for the prettyprinter package
 description:

@@ -1,4 +1,4 @@
-# Dev
+# 0.1.3
 
 - Add functions for rendering with specified layout options
 - Add pretty functions for types of `enummapset` package, could be disabled with `enummapset` flag
