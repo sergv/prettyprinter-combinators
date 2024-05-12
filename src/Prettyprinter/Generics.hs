@@ -377,6 +377,10 @@ instance {-# OVERLAPS #-} PPGenericOverride TH.Specificity        where ppGeneri
 instance {-# OVERLAPS #-} PPGenericOverride TH.BndrVis            where ppGenericOverride = gpretty . from
 #endif
 
+#if MIN_VERSION_template_haskell(2, 22, 0)
+instance {-# OVERLAPS #-} PPGenericOverride TH.NamespaceSpecifier where ppGenericOverride = gpretty . from
+#endif
+
 instance {-# OVERLAPS #-}
   ( PPGenericOverride a
   , PPGenericOverride b

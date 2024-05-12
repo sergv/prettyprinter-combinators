@@ -2,6 +2,7 @@
 
 - Add functions for rendering with specified layout options
 - Add pretty functions for types of `enummapset` package
+- Fix build with GHC 9.10
 
 # 0.1.2
 
