@@ -6,6 +6,7 @@
 -- Maintainer  :  serg.foo@gmail.com
 ----------------------------------------------------------------------------
 
+{-# LANGUAGE CPP               #-}
 {-# LANGUAGE OverloadedStrings #-}
 
 module Prettyprinter.Combinators
@@ -52,10 +53,6 @@ module Prettyprinter.Combinators
   , ppIntSetWith
   , ppIntMap
   , ppIntMapWith
-  , ppEnumSet
-  , ppEnumSetWith
-  , ppEnumMap
-  , ppEnumMapWith
   , ppHashSet
   , ppHashSetWith
   , ppHashMap
@@ -73,6 +70,13 @@ module Prettyprinter.Combinators
   , ppShortByteString
   , ppCallStack
   , ppCallStackGHC
+
+#ifdef HAVE_ENUMMAPSET
+  , ppEnumSet
+  , ppEnumSetWith
+  , ppEnumMap
+  , ppEnumMapWith
+#endif
   ) where
 
 import Data.Bimap (Bimap)
@@ -82,10 +86,6 @@ import Data.ByteString.Lazy.Char8 qualified as CL8
 import Data.ByteString.Short qualified as ShortBS
 import Data.DList (DList)
 import Data.DList qualified as DL
-import Data.EnumMap (EnumMap)
-import Data.EnumMap qualified as EM
-import Data.EnumSet (EnumSet)
-import Data.EnumSet qualified as ES
 import Data.Foldable
 import Data.HashMap.Strict (HashMap)
 import Data.HashMap.Strict qualified as HM
@@ -108,6 +108,13 @@ import Prettyprinter qualified as PP
 import Prettyprinter.Combinators.Basic
 import Prettyprinter.MetaDoc
 import Prettyprinter.Render.Text qualified as PP.Render
+
+#ifdef HAVE_ENUMMAPSET
+import Data.EnumMap (EnumMap)
+import Data.EnumMap qualified as EM
+import Data.EnumSet (EnumSet)
+import Data.EnumSet qualified as ES
+#endif
 
 putDocLn :: Doc ann -> IO ()
 putDocLn x = do
@@ -234,6 +241,7 @@ ppIntMap = ppIntMapWith pretty pretty
 ppIntMapWith :: (Int -> Doc ann) -> (a -> Doc ann) -> IntMap a -> Doc ann
 ppIntMapWith f g = ppAssocListWith f g . IM.toList
 
+#ifdef HAVE_ENUMMAPSET
 ppEnumSet :: (Enum a, Pretty a) => EnumSet a -> Doc ann
 ppEnumSet = ppEnumSetWith pretty
 
@@ -245,6 +253,7 @@ ppEnumMap = ppEnumMapWith pretty pretty
 
 ppEnumMapWith :: Enum k => (k -> Doc ann) -> (v -> Doc ann) -> EnumMap k v -> Doc ann
 ppEnumMapWith f g = ppAssocListWith f g . EM.toList
+#endif
 
 ppHashSet :: Pretty a => HashSet a -> Doc ann
 ppHashSet = ppHashSetWith pretty

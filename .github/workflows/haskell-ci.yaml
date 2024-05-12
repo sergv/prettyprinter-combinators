@@ -57,10 +57,15 @@ jobs:
         cd ..
         cabal get prettyprinter-combinators-*.tar.gz
 
-    - name: Build
+    - name: Build default
       run: |
         cd ../prettyprinter-combinators-*/
-        cabal build all --enable-tests --enable-benchmarks
+        cabal build all --enable-tests --enable-benchmarks --flags="+enummapset"
+
+    - name: Build without enummapset
+      run: |
+        cd ../prettyprinter-combinators-*/
+        cabal build all --enable-tests --enable-benchmarks --flags="-enummapset"
 
     - name: Doctest
       run: |

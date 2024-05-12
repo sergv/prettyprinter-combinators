@@ -29,8 +29,10 @@ import Data.ByteString.Lazy.Char8 qualified as CL8
 import Data.ByteString.Short qualified as ShortBS
 import Data.DList (DList)
 import Data.DList qualified as DL
+#ifdef HAVE_ENUMMAPSET
 import Data.EnumMap (EnumMap)
 import Data.EnumSet (EnumSet)
+#endif
 import Data.Foldable
 import Data.Functor.Compose
 import Data.HashMap.Strict (HashMap)
@@ -442,6 +444,7 @@ instance {-# OVERLAPS #-} PPGenericOverride v => PPGenericOverride (IntMap v) wh
   ppGenericOverride =
     atomicMetaDoc . ppIntMapWith ppGenericOverrideDoc ppGenericOverrideDoc
 
+#ifdef HAVE_ENUMMAPSET
 instance {-# OVERLAPS #-} (Enum a, PPGenericOverride a) => PPGenericOverride (EnumSet a) where
   ppGenericOverride =
     atomicMetaDoc . ppEnumSetWith ppGenericOverrideDoc
@@ -449,6 +452,7 @@ instance {-# OVERLAPS #-} (Enum a, PPGenericOverride a) => PPGenericOverride (En
 instance {-# OVERLAPS #-} (Enum k, PPGenericOverride k, PPGenericOverride v) => PPGenericOverride (EnumMap k v ) where
   ppGenericOverride =
     atomicMetaDoc . ppEnumMapWith ppGenericOverrideDoc ppGenericOverrideDoc
+#endif
 
 instance {-# OVERLAPS #-} PPGenericOverride v => PPGenericOverride (HashSet v) where
   ppGenericOverride =
