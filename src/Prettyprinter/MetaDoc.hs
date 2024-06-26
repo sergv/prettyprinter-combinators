@@ -54,6 +54,7 @@ import Prettyprinter
 import Prettyprinter qualified as PP
 import Prettyprinter.Combinators.Basic
 
+-- Constructor order is significant.
 data DocKind = Atomic | Composite
   deriving (Eq, Ord, Enum, Bounded)
 
