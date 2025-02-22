@@ -1,3 +1,7 @@
+# Dev
+
+- Add `hPutDocLn`
+
 # 0.1.3
 
 - Add functions for rendering with specified layout options

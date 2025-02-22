@@ -13,6 +13,7 @@ module Prettyprinter.Combinators
   ( Pretty(..)
   , PP.Doc
   , putDocLn
+  , hPutDocLn
   , render
   , renderLazy
   , renderString
@@ -108,6 +109,7 @@ import Prettyprinter qualified as PP
 import Prettyprinter.Combinators.Basic
 import Prettyprinter.MetaDoc
 import Prettyprinter.Render.Text qualified as PP.Render
+import System.IO (Handle, hPutStrLn, stdout)
 
 #ifdef HAVE_ENUMMAPSET
 import Data.EnumMap (EnumMap)
@@ -117,9 +119,12 @@ import Data.EnumSet qualified as ES
 #endif
 
 putDocLn :: Doc ann -> IO ()
-putDocLn x = do
-  PP.Render.putDoc x
-  putStrLn ""
+putDocLn = hPutDocLn stdout
+
+hPutDocLn :: Handle -> Doc ann -> IO ()
+hPutDocLn h x = do
+  PP.Render.hPutDoc h x
+  hPutStrLn h ""
 
 render :: Doc ann -> T.Text
 render = renderWith PP.defaultLayoutOptions
