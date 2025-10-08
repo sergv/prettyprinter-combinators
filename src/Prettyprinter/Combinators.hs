@@ -126,12 +126,15 @@ hPutDocLn h x = do
   PP.Render.hPutDoc h x
   hPutStrLn h ""
 
+-- @since 0.1.1
 render :: Doc ann -> T.Text
 render = renderWith PP.defaultLayoutOptions
 
+-- @since 0.1.1
 renderLazy :: Doc ann -> TL.Text
 renderLazy = renderLazyWith PP.defaultLayoutOptions
 
+-- @since 0.1.1
 renderString :: Doc ann -> String
 renderString = renderStringWith PP.defaultLayoutOptions
 
