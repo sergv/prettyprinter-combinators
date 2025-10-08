@@ -103,6 +103,7 @@ library
     , syb
     , template-haskell >= 2.18
     , text
+    , time
     , unordered-containers
     , vector
 

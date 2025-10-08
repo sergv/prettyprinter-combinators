@@ -1,6 +1,7 @@
 # Dev
 
 - Add `hPutDocLn`
+- Add `ppUTCTimeISO8601`. Add dependency on `time` package.
 
 # 0.1.3
 

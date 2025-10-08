@@ -48,6 +48,7 @@ import Data.Set (Set)
 import Data.Text (Text)
 import Data.Text qualified as T
 import Data.Text.Lazy qualified as TL
+import Data.Time (UTCTime)
 import Data.Vector (Vector)
 import Data.Void
 import Data.Word
@@ -207,7 +208,7 @@ ppGenericOverrideDoc = mdPayload . ppGenericOverride
 newtype PPGenericOverrideToPretty a = PPGenericOverrideToPretty { unPPGenericOverrideToPretty :: a }
 
 instance PPGenericOverride a => Pretty (PPGenericOverrideToPretty a) where
-  pretty = mdPayload . ppGenericOverride . unPPGenericOverrideToPretty
+  pretty = ppGenericOverrideDoc . unPPGenericOverrideToPretty
 
 
 -- | Fall back to standard 'Pretty' instance when no override is available.
@@ -466,6 +467,9 @@ instance {-# OVERLAPS #-} PPGenericOverride (f (g a)) => PPGenericOverride (Comp
   ppGenericOverride =
     ppGenericOverride . getCompose
 
+instance {-# OVERLAPS #-} PPGenericOverride UTCTime where
+  ppGenericOverride =
+    atomicMetaDoc . ppUTCTimeISO8601
 
 instance (GPretty f, GPretty g) => GPretty (f :*: g) where
   gpretty (x :*: y) =

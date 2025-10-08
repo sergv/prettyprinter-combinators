@@ -71,6 +71,7 @@ module Prettyprinter.Combinators
   , ppShortByteString
   , ppCallStack
   , ppCallStackGHC
+  , ppUTCTimeISO8601
 
 #ifdef HAVE_ENUMMAPSET
   , ppEnumSet
@@ -102,6 +103,8 @@ import Data.Map.Strict qualified as M
 import Data.Set (Set)
 import Data.Text qualified as T
 import Data.Text.Lazy qualified as TL
+import Data.Time (UTCTime)
+import Data.Time.Format.ISO8601 qualified as ISO8601
 import Data.Vector.Generic qualified as G
 import GHC.Stack (CallStack, SrcLoc(..), getCallStack, prettySrcLoc)
 import Prettyprinter (Pretty(..), Doc, (<+>))
@@ -346,3 +349,8 @@ ppCallStackGHC =
   map (\(name, loc) ->
         docFromString name <> ", called at" <+> docFromString (prettySrcLoc loc)) .
   getCallStack
+
+ppUTCTimeISO8601 :: UTCTime -> Doc ann
+ppUTCTimeISO8601 x = case ISO8601.formatShowM ISO8601.iso8601Format x of
+  Nothing -> pretty $ show x
+  Just y  -> pretty y
